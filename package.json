@@ -1,0 +1,57 @@
+{
+  "name": "typscript-api",
+  "version": "1.0.0",
+  "description": "Typescript Node.js API",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "yarn build && node dist/src/index.js",
+    "start:local": "ts-node-dev src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:functional": "jest --projects ./test --runInBand",
+    "lint": "eslint ./src ./test --ext .ts",
+    "style:check": "prettier --check src/**/*.ts test/**/*.ts",
+    "style:fix": "prettier --write src/**/*.ts test/**/*.ts",
+    "test:unit": "jest",
+    "lint:fix": "eslint ./src ./test --ext .ts --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WILLOSU/OndasSurf.git"
+  },
+  "keywords": [
+    "nodejs",
+    "typscript",
+    "api"
+  ],
+  "author": "William Mota",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WILLOSU/OndasSurf/issues"
+  },
+  "homepage": "https://github.com/WILLOSU/OndasSurf#readme",
+  "devDependencies": {
+    "@types/axios": "^0.14.4",
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/module-alias": "^2.0.4",
+    "@types/node": "^24.7.2",
+    "@types/supertest": "^6.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
+    "eslint": "8",
+    "jest": "^30.2.0",
+    "prettier": "^3.6.2",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.5",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@overnightjs/core": "^1.7.6",
+    "axios": "^1.12.2",
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "module-alias": "^2.2.3"
+  }
+}
