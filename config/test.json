@@ -1,0 +1,11 @@
+
+{
+    "App":{
+
+        "resources":{
+            "StormGlass":{
+                "apiToken": "test-token"
+            }
+        }
+    }
+}

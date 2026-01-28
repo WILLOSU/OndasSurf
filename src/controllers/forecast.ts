@@ -1,49 +1,28 @@
-import { Controller, Get } from '@overnightjs/core';
+import { ClassMiddleware, Controller, Get } from '@overnightjs/core';
 import { Request, Response } from 'express';
+import { Forecast } from '@src/services/forecast';
+import { Beach } from '@src/models/beach';
+import { StormGlass } from '@src/clients/stormGlass';
+import { authMiddleware } from '@src/middlewares/auth';
 
-@Controller('forecast') // defenindo rotas
+const stormGlass = new StormGlass();
+const forecast = new Forecast(stormGlass);
+
+@Controller('forecast')
+@ClassMiddleware(authMiddleware)
 export class ForecastController {
-  @Get('') // recebe um request e um response
-  public getForecastForLoggedUser(_: Request, res: Response): void {
-    res.send([
-      {
-        time: '2020-04-26T00:00:00+00:00',
-        forecast: [
-          {
-            lat: -33.792726,
-            lng: 151.289824,
-            name: 'Manly',
-            position: 'E',
-            rating: 2,
-            swellDirection: 64.26,
-            swellHeight: 0.15,
-            swellPeriod: 3.89,
-            time: '2020-04-26T00:00:00+00:00',
-            waveDirection: 231.38,
-            waveHeight: 0.47,
-            windDirection: 299.45,
-          },
-        ],
-      },
-      {
-        time: '2020-04-26T01:00:00+00:00',
-        forecast: [
-          {
-            lat: -33.792726,
-            lng: 151.289824,
-            name: 'Manly',
-            position: 'E',
-            rating: 2,
-            swellDirection: 123.41,
-            swellHeight: 0.21,
-            swellPeriod: 3.67,
-            time: '2020-04-26T01:00:00+00:00',
-            waveDirection: 232.12,
-            waveHeight: 0.46,
-            windDirection: 310.48,
-          },
-        ],
-      },
-    ]);
+  @Get('')
+  public async getForecastForLoggedUser(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    try {
+      const beaches = await Beach.find({user: req.decoded?.id});
+     const forecastData = await forecast.processForecastForBeaches(beaches as unknown as Beach[]);
+      res.status(200).send(forecastData);
+    } catch (error){
+      console.log('Forecast error:', error); 
+      res.status(500).send({ error: 'Something went wrong' });
+    }
   }
 }

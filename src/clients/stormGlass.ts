@@ -1,12 +1,12 @@
-import { AxiosStatic } from 'axios'; // P.0
+import axios, { AxiosStatic } from 'axios';
+import { InternalError } from '@src/util/errors/internal-error';
+import config, { IConfig } from 'config';
 
 export interface StormGlassPointSource {
-  // P.3
-  [key: string]: number; // uma chave string valor número, é dinámico
+  [key: string]: number;
 }
 
 export interface StormGlassPoint {
-  // P.4
   readonly time: string;
   readonly waveDirection: StormGlassPointSource;
   readonly swellDirection: StormGlassPointSource;
@@ -16,18 +16,32 @@ export interface StormGlassPoint {
   readonly windDirection: StormGlassPointSource;
   readonly windSpeed: StormGlassPointSource;
 }
-export interface StormGlassForecastResponse {
-  // P.2
-  // resposta da api externa
-  // diferença usar interface, usar tipos
-  // interface = descrever objetos, shape de dados
 
-  hours: StormGlassPoint[]; // ==> desta forma uma lista com vários |  [StormGlassPoint] <== desta forma é um elemento só.
+export class ClientRequestError extends InternalError {
+  constructor(message: string) {
+    const internalMessage =
+      'Unexpected error when tyring to comunicate to StormGlass';
+    super(`${internalMessage}: ${message}`);
+  }
 }
 
-// dados normalizados finais
+export class StormGlassResponseError extends InternalError {
+  constructor(message: string) {
+    const internalMessage =
+      'Unexpected error returned by the StormGlass service';
+    super(`${internalMessage}: ${message}`);
+  }
+}
+
+const stormGlassResourceConfig: IConfig = config.get(
+  'App.resources.StormGlass'
+);
+
+export interface StormGlassForecastResponse {
+  hours: StormGlassPoint[];
+}
+
 export interface ForecastPoint {
-  // P.5
   time: string;
   waveHeight: number;
   waveDirection: number;
@@ -41,41 +55,44 @@ export interface ForecastPoint {
 export class StormGlass {
   readonly stormGlassAPIParams =
     'swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed';
-
   readonly stormGlassAPISource = 'noaa';
-  constructor(protected request: AxiosStatic) {}
 
-  //P.1 - DESATUALIZADO
+  constructor(protected request: AxiosStatic = axios) {}
+public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
+ //console.log(stormGlassResourceConfig);
+  
 
-  /* P.1 - DESATUALIZADO
-  public async fetchPoints(lat: number, lng: number): Promisse<{}> {
-    return this.request.get();
-    `https://api.stormglass.io/v2/weather/point?params=${this.stormGlassAPIParams}source=${this.stormGlassAPISource}&end=15921138026&lat=${lat}&lng=${lng}`
-  }
-  */
-
-  //P.1 - ATUALIZADO
-
-  public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
+  const endTime = Math.floor(Date.now() / 1000) + 48 * 3600; // 48 horas
+  
+  try {
     const response = await this.request.get<StormGlassForecastResponse>(
-      `https://api.stormglass.io/v2/weather/point?params=${this.stormGlassAPIParams}source=${this.stormGlassAPISource}&end=15921138026&lat=${lat}&lng=${lng}`
+      `${stormGlassResourceConfig.get('apiUrl')}/weather/point?params=${
+        this.stormGlassAPIParams
+      }&source=${this.stormGlassAPISource}&end=${endTime}&lat=${lat}&lng=${lng}`,
+      {
+        headers: {
+          Authorization: stormGlassResourceConfig.get('apiToken'),
+        },
+      }
     );
 
-    // como saber se a resposta que vem do get é neste formato?
-    // get aceita um paramêtro genérico que vem do typeScript
-    // você diz para ele qual é o tipo da sua resposta e ele vai retronar uma axios resposta que é um tipo
-    // de resposta com o teu tipo de resposta dentro!!
-
-    // get<T = any, R = string>(config?: AnosRequestConfig): Promise<R>;
-
     return this.normalizeResponse(response.data);
+  } catch (err: unknown) {
+      if (this.isAxiosError(err)) {
+        throw new StormGlassResponseError(
+          `Error: ${JSON.stringify(err.response.data)} Code: ${err.response.status}`
+        );
+      }
+      throw new ClientRequestError(this.getErrorMessage(err));
+    }
   }
 
+  // Transforma dados sujos da API em dados limpos para a aplicação
   private normalizeResponse(
-    // P.4
     points: StormGlassForecastResponse
   ): ForecastPoint[] {
     return points.hours.filter(this.isValidPoint.bind(this)).map((point) => ({
+      // remove dados inválidos, o map pega só o que preciso de cada fonte
       swellDirection: point.swellDirection[this.stormGlassAPISource],
       swellHeight: point.swellHeight[this.stormGlassAPISource],
       swellPeriod: point.swellPeriod[this.stormGlassAPISource],
@@ -87,17 +104,45 @@ export class StormGlass {
     }));
   }
 
+  /*
+  "Recebo um monte de dados bagunçados com várias fontes. Primeiro filtro só os válidos, 
+  depois transformo pegando apenas da fonte NOAA, criando objetos limpos e padronizados."
+  */
+
   private isValidPoint(point: Partial<StormGlassPoint>): boolean {
-    // P.6
     return !!(
-      point.time &&
-      point.swellDirection?.[this.stormGlassAPISource] &&
-      point.swellHeight?.[this.stormGlassAPISource] &&
-      point.swellPeriod?.[this.stormGlassAPISource] &&
-      point.waveDirection?.[this.stormGlassAPISource] &&
-      point.waveHeight?.[this.stormGlassAPISource] &&
-      point.windDirection?.[this.stormGlassAPISource] &&
-      point.windSpeed?.[this.stormGlassAPISource]
+      // assume que todas as chaves são nulas ou indefinidas, então verifica se todas existem
+      (
+        point.time && // força o uso de ponto de exclamação para converter em booleano
+        point.swellHeight?.[this.stormGlassAPISource] && // se a chave existe, pega este índice da fonte NOAA
+        point.swellPeriod?.[this.stormGlassAPISource] &&
+        point.waveDirection?.[this.stormGlassAPISource] &&
+        point.waveHeight?.[this.stormGlassAPISource] &&
+        point.windDirection?.[this.stormGlassAPISource] &&
+        point.windSpeed?.[this.stormGlassAPISource]
+      )
     );
+  }
+
+  // para um ponto ser válido, todos eles devem dar true, se não descarta o ponto
+
+  private isAxiosError(
+    error: unknown
+  ): error is { response: { status: number; data: unknown } } {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'response' in error &&
+      typeof (error as { response?: unknown }).response === 'object' &&
+      (error as { response: unknown }).response !== null &&
+      'status' in (error as { response: { status?: unknown } }).response
+    );
+  }
+
+  private getErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    return String(error);
   }
 }
