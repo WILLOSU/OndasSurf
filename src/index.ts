@@ -1,11 +1,16 @@
-import { SetupServer } from './server';
-import config from 'config';
+import * as path from 'path';
+import moduleAlias from 'module-alias';
 
-async function bootstrap() {
-  // config.get('App.port') lerá a variável PORT do Render graças ao Passo 3
-  const server = new SetupServer(config.get('App.port')); 
-  await server.init();
-  server.start();
-}
+// __dirname é a pasta onde este arquivo (module-alias.js) está.
+// Precisamos subir dois níveis para chegar na raiz do projeto (dist ou src).
+const files = path.resolve(__dirname, '../..');
 
-bootstrap();
+moduleAlias.addAliases({
+  // Se o caminho atual contém 'dist', usamos a raiz da dist. 
+  // Caso contrário, usamos a pasta 'src'.
+  '@src': __dirname.includes('dist') 
+    ? path.join(files) 
+    : path.join(files, 'src'),
+    
+  '@test': path.join(files, 'test'),
+});
