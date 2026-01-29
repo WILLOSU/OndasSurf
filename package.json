@@ -1,6 +1,7 @@
 {
   "name": "typscript-api",
   "version": "1.0.0",
+   "private": true,
   "description": "Typescript Node.js API",
   "main": "index.js",
   "scripts": {
