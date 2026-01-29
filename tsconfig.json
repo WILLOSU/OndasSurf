@@ -6,40 +6,26 @@
     "lib": ["es2019", "dom"],
     "sourceMap": true,
     "outDir": "dist",
+    "rootDir": "./src",  // Adicione esta linha exata aqui
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "noImplicitThis": true,
-    "resolveJsonModule": true,
-    "alwaysStrict": true,
-    "removeComments": true,
-    "noImplicitReturns": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "allowJs": true,
-    "baseUrl": ".",
+    "baseUrl": ".",      // Mantém a base na raiz do projeto
     "paths": {
-      "@src/*": ["./src/*"],
-
-      "@test/*": ["./test/*"]
+      "@src/*": ["src/*"],   // Remova o "./" antes de src aqui
+      "@test/*": ["test/*"]
     },
-    "rootDirs": ["./src", "./test"],
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
   "include": [
-    "./src/**/*.ts",
-    "./src/**/*.js",
-    "./test/**/*.ts",
-    "./test/**/*.d.ts",
-    "src/**/*.d.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
-  "node_modules",
-  "dist",
-  "test",
-  "**/__test__/*",
-  "**/*.test.ts"
-]
+    "node_modules",
+    "dist",
+    "test",
+    "**/__test__/*",
+    "**/*.test.ts"
+  ]
 }
