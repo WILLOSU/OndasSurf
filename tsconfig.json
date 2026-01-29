@@ -3,7 +3,7 @@
     "target": "es2019",
     "moduleResolution": "node",
     "module": "commonjs",
-     "lib": ["es2019", "dom"],
+    "lib": ["es2019", "dom"],
     "sourceMap": true,
     "outDir": "dist",
     "strict": true,
@@ -24,22 +24,22 @@
 
       "@test/*": ["./test/*"]
     },
-    "rootDirs": [
-      "./src",
-      "./test"
-    ],
+    "rootDirs": ["./src", "./test"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
   "include": [
     "./src/**/*.ts",
-     "./src/**/*.js", 
+    "./src/**/*.js",
     "./test/**/*.ts",
     "./test/**/*.d.ts",
-     "src/**/*.d.ts"
-, ],
+    "src/**/*.d.ts"
+  ],
   "exclude": [
-    "./node_modules/*",
-    "dist"
-  ]
+  "node_modules",
+  "dist",
+  "test",
+  "**/__test__/*",
+  "**/*.test.ts"
+]
 }
