@@ -1,16 +1,17 @@
 import * as path from 'path';
 import moduleAlias from 'module-alias';
 
-// __dirname é a pasta onde este arquivo (module-alias.js) está.
-// Precisamos subir dois níveis para chegar na raiz do projeto (dist ou src).
-const files = path.resolve(__dirname, '../..');
+// Pega o diretório onde este arquivo compilado está (dist/util)
+const currentDir = __dirname;
+
+// Se estivermos na 'dist', a raiz do código é a própria 'dist'
+// Se estivermos na 'src', a raiz é a 'src'
+const isProduction = currentDir.includes('dist');
+const rootPath = isProduction 
+  ? path.resolve(currentDir, '..') // Sobe de 'util' para 'dist'
+  : path.resolve(currentDir, '..'); // Sobe de 'util' para 'src'
 
 moduleAlias.addAliases({
-  // Se o caminho atual contém 'dist', usamos a raiz da dist. 
-  // Caso contrário, usamos a pasta 'src'.
-  '@src': __dirname.includes('dist') 
-    ? path.join(files) 
-    : path.join(files, 'src'),
-    
-  '@test': path.join(files, 'test'),
+  '@src': rootPath,
+  '@test': path.resolve(rootPath, '..', 'test'),
 });
