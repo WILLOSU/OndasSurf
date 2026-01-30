@@ -8,7 +8,8 @@ import { BeachesController } from './controllers/beaches';
 import { UsersController } from './controllers/users'; 
 
 export class SetupServer extends Server {
-  constructor(private port = 3000) {
+  // 1. Aceitamos string ou number para a porta vinda do process.env
+  constructor(private port: string | number = 3000) {
     super();
   }
 
@@ -29,24 +30,25 @@ export class SetupServer extends Server {
     this.addControllers([forecastController, beachesController, usersController]); 
   }
 
- private async databaseSetup(): Promise<void> { 
-  //console.log('--- Tentando conectar ao MongoDB... ---');
-  try {
-    await database.connect();
-    //console.log('');
-  } catch (error) {
-    console.error('', error);
-    throw error; // Repassa o erro para o Jest mostrar o motivo real
+  private async databaseSetup(): Promise<void> { 
+    try {
+      await database.connect();
+      console.log('MongoDB conectado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao conectar no MongoDB:', error);
+      throw error; 
+    }
   }
-}
 
   public async close(): Promise<void> {
     await database.close();
   }
 
+  // 2. APENAS UM MÉTODO START com as configurações de nuvem
   public start(): void {
-    this.app.listen(this.port, () => {
-      //console.log(``);
+    const portToListen = Number(this.port);
+    this.app.listen(portToListen, '0.0.0.0', () => {
+      console.log(`Servidor rodando com sucesso na porta: ${portToListen}`);
     });
   }
   
