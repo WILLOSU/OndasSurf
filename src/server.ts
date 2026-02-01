@@ -26,7 +26,6 @@ export class SetupServer extends Server {
     const forecastController = new ForecastController();
     const beachesController = new BeachesController();
     const usersController = new UsersController();
-
     this.addControllers([
       forecastController,
       beachesController,
@@ -48,10 +47,8 @@ export class SetupServer extends Server {
     await database.close();
   }
 
-  // 🔥 USADO SOMENTE EM PRODUÇÃO
   public start(): void {
     const portToListen = Number(this.port);
-
     this.app.listen(portToListen, '0.0.0.0', () => {
       console.log(`Servidor rodando com sucesso na porta: ${portToListen}`);
     });
