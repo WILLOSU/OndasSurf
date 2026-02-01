@@ -1,31 +1,19 @@
 {
   "compilerOptions": {
     "target": "es2019",
-    "moduleResolution": "node",
     "module": "commonjs",
-    "lib": ["es2019", "dom"],
-    "sourceMap": true,
+    "moduleResolution": "node",
     "outDir": "dist",
-    "rootDir": "./src",  // Adicione esta linha exata aqui
+    "rootDir": "./src",
     "strict": true,
-    "baseUrl": ".",      // Mantém a base na raiz do projeto
+    "baseUrl": ".",
     "paths": {
-      "@src/*": ["src/*"],   // Remova o "./" antes de src aqui
-      "@test/*": ["test/*"]
+      "@src/*": ["src/*"]
     },
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "test",
-    "**/__test__/*",
-    "**/*.test.ts"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
