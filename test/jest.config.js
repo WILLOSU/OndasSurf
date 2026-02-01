@@ -1,17 +1,18 @@
-const { resolve } = require('path');
-const root = resolve(__dirname, '..');
-const rootConfig = require(`${root}/jest.config.js`);
+import { resolve } from 'path';
 
-module.exports = { 
-  ...rootConfig, 
-  ...{
-    rootDir: root,
-    displayName: "end2end-tests", // de ponta a ponta
-    setupFilesAfterEnv: ["<rootDir>/test/jest-setup.ts"], // roda antes
-    testMatch: ["<rootDir>/test/**/*.test.ts"], // arquivos que estão da pasta test
-    moduleNameMapper: {
-      '^@src/(.*)$': '<rootDir>/src/$1',
-      '^@test/(.*)$': '<rootDir>/test/$1',
+export default {
+  rootDir: resolve(__dirname),
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  setupFilesAfterEnv: ['<rootDir>/test/jest-setup.ts'],
+  testMatch: ['<rootDir>/test/**/*.test.ts'],
+  moduleNameMapper: {
+    '^@src/(.*)$': '<rootDir>/src/$1',
+    '^@test/(.*)$': '<rootDir>/test/$1'
+  },
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.json'
     }
   }
 };

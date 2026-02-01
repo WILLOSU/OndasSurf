@@ -5,10 +5,9 @@ import { ForecastController } from './controllers/forecast';
 import { Application } from 'express';
 import * as database from './database';
 import { BeachesController } from './controllers/beaches';
-import { UsersController } from './controllers/users'; 
+import { UsersController } from './controllers/users';
 
 export class SetupServer extends Server {
-  // 1. Aceitamos string ou number para a porta vinda do process.env
   constructor(private port: string | number = 3000) {
     super();
   }
@@ -16,7 +15,7 @@ export class SetupServer extends Server {
   public async init(): Promise<void> {
     this.setupExpress();
     this.setupControllers();
-    await this.databaseSetup(); 
+    await this.databaseSetup();
   }
 
   private setupExpress(): void {
@@ -26,17 +25,22 @@ export class SetupServer extends Server {
   private setupControllers(): void {
     const forecastController = new ForecastController();
     const beachesController = new BeachesController();
-    const usersController = new UsersController(); 
-    this.addControllers([forecastController, beachesController, usersController]); 
+    const usersController = new UsersController();
+
+    this.addControllers([
+      forecastController,
+      beachesController,
+      usersController,
+    ]);
   }
 
-  private async databaseSetup(): Promise<void> { 
+  private async databaseSetup(): Promise<void> {
     try {
       await database.connect();
       console.log('MongoDB conectado com sucesso!');
     } catch (error) {
       console.error('Erro ao conectar no MongoDB:', error);
-      throw error; 
+      throw error;
     }
   }
 
@@ -44,14 +48,15 @@ export class SetupServer extends Server {
     await database.close();
   }
 
-  // 2. APENAS UM MÉTODO START com as configurações de nuvem
+  // 🔥 USADO SOMENTE EM PRODUÇÃO
   public start(): void {
     const portToListen = Number(this.port);
+
     this.app.listen(portToListen, '0.0.0.0', () => {
       console.log(`Servidor rodando com sucesso na porta: ${portToListen}`);
     });
   }
-  
+
   public getApp(): Application {
     return this.app;
   }
