@@ -6,6 +6,7 @@ import { Application } from 'express';
 import * as database from './database';
 import { BeachesController } from './controllers/beaches';
 import { UsersController } from './controllers/users';
+import logger from './logger';
 
 export class SetupServer extends Server {
   constructor(private port: string | number = 3000) {
@@ -36,7 +37,7 @@ export class SetupServer extends Server {
   private async databaseSetup(): Promise<void> {
     try {
       await database.connect();
-      console.log('MongoDB conectado com sucesso!');
+      logger.info('MongoDB conectado com sucesso!');
     } catch (error) {
       console.error('Erro ao conectar no MongoDB:', error);
       throw error;
@@ -48,9 +49,8 @@ export class SetupServer extends Server {
   }
 
   public start(): void {
-    const portToListen = Number(this.port);
-    this.app.listen(portToListen, '0.0.0.0', () => {
-      console.log(`Servidor rodando com sucesso na porta: ${portToListen}`);
+    this.app.listen(this.port, () => {
+      logger.info('Server listening on port: ' + this.port);
     });
   }
 

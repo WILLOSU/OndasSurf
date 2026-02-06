@@ -1,11 +1,13 @@
-
 {
-    "App":{
+  "App": {
+    "resources": {
+      "StormGlass": {
+        "apiToken": "test-token"
+      }
+    },
 
-        "resources":{
-            "StormGlass":{
-                "apiToken": "test-token"
-            }
-        }
+    "logger": {
+      "enabled": "false"
     }
+  }
 }

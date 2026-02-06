@@ -58,26 +58,25 @@ export class StormGlass {
   readonly stormGlassAPISource = 'noaa';
 
   constructor(protected request: AxiosStatic = axios) {}
-public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
- //console.log(stormGlassResourceConfig);
-  
+  public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
+    //logger.info(stormGlassResourceConfig);
 
-  const endTime = Math.floor(Date.now() / 1000) + 48 * 3600; // 48 horas
-  
-  try {
-    const response = await this.request.get<StormGlassForecastResponse>(
-      `${stormGlassResourceConfig.get('apiUrl')}/weather/point?params=${
-        this.stormGlassAPIParams
-      }&source=${this.stormGlassAPISource}&end=${endTime}&lat=${lat}&lng=${lng}`,
-      {
-        headers: {
-          Authorization: stormGlassResourceConfig.get('apiToken'),
-        },
-      }
-    );
+    const endTime = Math.floor(Date.now() / 1000) + 48 * 3600; // 48 horas
 
-    return this.normalizeResponse(response.data);
-  } catch (err: unknown) {
+    try {
+      const response = await this.request.get<StormGlassForecastResponse>(
+        `${stormGlassResourceConfig.get('apiUrl')}/weather/point?params=${
+          this.stormGlassAPIParams
+        }&source=${this.stormGlassAPISource}&end=${endTime}&lat=${lat}&lng=${lng}`,
+        {
+          headers: {
+            Authorization: stormGlassResourceConfig.get('apiToken'),
+          },
+        }
+      );
+
+      return this.normalizeResponse(response.data);
+    } catch (err: unknown) {
       if (this.isAxiosError(err)) {
         throw new StormGlassResponseError(
           `Error: ${JSON.stringify(err.response.data)} Code: ${err.response.status}`

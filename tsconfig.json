@@ -4,7 +4,6 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": ["es2019"],
-    "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
     "sourceMap": true,
@@ -12,12 +11,14 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
 
     "baseUrl": ".",
     "paths": {
-      "@src/*": ["src/*"]
+      "@src/*": ["./src/*"],
+      "@test/*": ["./test/*"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }
