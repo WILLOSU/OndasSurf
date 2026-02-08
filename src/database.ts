@@ -3,18 +3,15 @@ import mongoose, { Mongoose } from 'mongoose';
 import logger from '@src/logger';
 
 export const connect = async (): Promise<Mongoose> => {
-  // Tenta pegar do config primeiro, depois do process.env como fallback
   let mongoUrl: string;
 
   try {
     mongoUrl = config.get<string>('App.database.mongoUrl');
   } catch {
-
     mongoUrl =
       process.env.MONGODB_URL || 'mongodb://localhost:27017/surf-forecast';
   }
 
-  
   if (process.env.NODE_ENV === 'production' && mongoUrl.includes('localhost')) {
     mongoUrl = process.env.MONGODB_URL || mongoUrl;
   }

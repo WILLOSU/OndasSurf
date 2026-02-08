@@ -7,6 +7,7 @@ enum ExitStatus {
   Success = 0,
 }
 
+// esqutando promisse com rejeição, e joga um exceção
 process.on('unhandledRejection', (reason, promise) => {
   console.error(
     `App exiting due to an unhandled promise: ${promise} and reason: ${reason}`
@@ -14,6 +15,7 @@ process.on('unhandledRejection', (reason, promise) => {
   throw reason;
 });
 
+// quando houver uma exceção
 process.on('uncaughtException', (error) => {
   console.error(`App exiting due to an uncaught exception: ${error}`);
   process.exit(ExitStatus.Failure);
@@ -24,7 +26,8 @@ process.on('uncaughtException', (error) => {
     const server = new SetupServer(process.env.PORT || config.get('App.port'));
     await server.init();
     server.start();
-
+    
+    // passa o sinal por um processo desligar
     const exitSignals: NodeJS.Signals[] = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
     exitSignals.forEach((sig) =>
       process.on(sig, async () => {

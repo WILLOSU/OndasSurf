@@ -12,13 +12,12 @@
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-
     "baseUrl": ".",
     "paths": {
       "@src/*": ["./src/*"],
       "@test/*": ["./test/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules", "dist"]
 }

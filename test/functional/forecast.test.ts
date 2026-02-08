@@ -9,30 +9,28 @@ import { User } from '@src/models/users';
 import AuthService from '@src/services/auth';
 
 describe('Beach forecast functional tests', () => {
-
-    const defaultUser = {
+  const defaultUser = {
     name: 'John Doe',
     email: 'john2@mail.com',
     password: '1234',
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-   let token: string;
-   beforeEach(async () => {
-     await Beach.deleteMany({});
-     await User.deleteMany({});
-     const user = await new User(defaultUser).save();
-     const defaultBeach = {
-     lat: -33.792726,
-     lng: 151.289824,
-     name: 'Manly',
-     position: BeachPosition.E,
-     user: user._id,
+  let token: string;
+  beforeEach(async () => {
+    await Beach.deleteMany({});
+    await User.deleteMany({});
+    const user = await new User(defaultUser).save();
+    const defaultBeach = {
+      lat: -33.792726,
+      lng: 151.289824,
+      name: 'Manly',
+      position: BeachPosition.E,
+      user: user._id,
     };
     await new Beach(defaultBeach).save();
-    
-    token = AuthService.generateToken(user.toJSON());
 
+    token = AuthService.generateToken(user.toJSON());
   });
 
   it('should return a forecast with just a few times', async () => {
@@ -48,8 +46,8 @@ describe('Beach forecast functional tests', () => {
       .reply(200, stormGlassWeather3HoursFixture);
 
     const { body, status } = await global.testRequest
-    .get('/forecast')
-    .set({ 'x-access-token': token});
+      .get('/forecast')
+      .set({ 'x-access-token': token });
     expect(status).toBe(200);
     expect(body).toEqual(apiForecastResponse1BeachFixture);
   }, 10000);
@@ -67,17 +65,17 @@ describe('Beach forecast functional tests', () => {
       .replyWithError('Something went wrong');
 
     const { status, body } = await global.testRequest
-    .get('/forecast')
-    .set({ 'x-access-token': token});
-    
-   
+      .get('/forecast')
+      .set({ 'x-access-token': token });
+
     expect(status).toBe(500);
     expect(body).toEqual({
-     error: 'Something went wrong',
+      code: 500,
+      error: 'Internal Server Error',
+      message: 'Something went wrong',
     });
   }, 10000);
 });
-
 
 // o super teste bate em um rota e compare a resposta
 // ISSO QUE EU ESPERO NO FINAL DA ROTA, QUERO QUE ELA ME DEVOVA O FORECAST
