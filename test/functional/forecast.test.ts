@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/triple-slash-reference */
 /// <reference path="../globals.d.ts" />
 
-import { Beach, BeachPosition } from '@src/models/beach';
+import { Beach, GeoPosition } from '@src/models/beach';
 import stormGlassWeather3HoursFixture from '@test/fixtures/stormglass_weather_3_hours.json';
 import nock from 'nock';
 import apiForecastResponse1BeachFixture from '@test/fixtures/api.forecast_response_1_beach.json';
@@ -25,7 +25,7 @@ describe('Beach forecast functional tests', () => {
       lat: -33.792726,
       lng: 151.289824,
       name: 'Manly',
-      position: BeachPosition.E,
+      position: GeoPosition.E,
       user: user._id,
     };
     await new Beach(defaultBeach).save();
