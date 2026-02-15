@@ -1,0 +1,264 @@
+src\client\src\services\endpoints\umbrella.ts
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMutation } from "@tanstack/react-query";
+import { api } from "../api";
+import { useQuery } from "@tanstack/react-query";
+
+interface PostOrder {
+  cnpj: string;
+  name: string;
+  syncPiperun: boolean;
+  insurers: number[];
+}
+
+export const useCreateOrder = () => {
+  return useMutation({
+    mutationKey: ["order"],
+    mutationFn: async (order: PostOrder) => {
+      const response = await api.request(
+        {
+          url: "/partners/orders",
+          method: "POST",
+          data: order,
+        },
+        true
+      );
+
+      return response.data;
+    },
+  });
+};
+
+export const useDownloadFile = () => {
+  return useMutation({
+    mutationKey: ["file"],
+    mutationFn: async (url: string) => {
+      await api.download(
+        {
+          url,
+          method: "GET",
+        },
+        true
+      );
+    },
+  });
+};
+
+interface GetOrderParams {
+  insurers?: number[];
+  orderId?: string | null;
+  insuranceId?: string | null;
+}
+
+export const useGetOrder = () => {
+  return useMutation({
+    mutationFn: async ({ insurers, orderId, insuranceId }: GetOrderParams) => {
+      const params: Record<string, any> = { insurers: insurers?.join(",") };
+
+      if (orderId) params.orderId = orderId;
+      if (insuranceId) params.insuranceId = insuranceId;
+
+      const response = await api.request(
+        {
+          url: "/partners/orders",
+          method: "GET",
+          params,
+        },
+        true
+      );
+
+      return response.data;
+    },
+  });
+};
+
+interface SubscribePayload {
+  insurers: number[];
+  orderId: string;
+  modality: string;
+  alias?: string;
+  data: any;
+  username: string;
+}
+
+export const useSubscribe = () => {
+  return useMutation({
+    mutationFn: async ({
+      insurers,
+      orderId,
+      data,
+      modality,
+      alias,
+      username,
+    }: SubscribePayload) => {
+      const body = { modality, alias, form: data, username };
+      const response = await api.request(
+        {
+          url: `/partners/subscribe/${orderId}`,
+          method: "POST",
+          params: {
+            insurers: insurers.join(","),
+          },
+          data: body,
+        },
+        true
+      );
+      return response.data;
+    },
+  });
+};
+
+export const useSubscribeValidate = () => {
+  return useMutation({
+    mutationFn: async ({
+      insurers,
+      data,
+      modality,
+      alias,
+    }: SubscribePayload) => {
+      const body = { modality, alias, form: data };
+      const response = await api.request(
+        {
+          url: `/partners/subscribe/validate/${insurers[0]}`,
+          method: "POST",
+          data: body,
+        },
+        true
+      );
+      return response.data;
+    },
+  });
+};
+
+interface SubscribePayloadUpdate {
+  insurer: number;
+  insuranceId: string;
+  data: any;
+}
+
+export const useUpdateSubscribe = () => {
+  return useMutation({
+    mutationFn: async ({
+      insurer,
+      insuranceId,
+      data,
+    }: SubscribePayloadUpdate) => {
+      const response = await api.request(
+        {
+          url: `/partners/subscribe/${insuranceId}`,
+          method: "PUT",
+          params: {
+            insurer: insurer,
+          },
+          data: {
+            insurer,
+            premium: data.premium,
+            installments: data.installments,
+            alias: data.alias,
+            modality: data.modality,
+            form: data,
+          },
+        },
+        true
+      );
+      return response.data;
+    },
+  });
+};
+
+interface IssuePolicyPayload {
+  insuranceId: string;
+  insurer: number;
+  username: string;
+  alias?: string;
+}
+
+export const useIssuePolicy = () => {
+  return useMutation({
+    mutationFn: async ({
+      insuranceId,
+      insurer,
+      username,
+      alias,
+    }: IssuePolicyPayload) => {
+      const response = await api.request(
+        {
+          url: `/partners/issue/${insuranceId}`,
+          method: "POST",
+          params: {
+            insurer,
+            username,
+            alias,
+          },
+        },
+        true
+      );
+      return response.data;
+    },
+  });
+};
+
+export const useCancelProposal = () => {
+  return useMutation({
+    mutationFn: async ({
+      insuranceId,
+      message,
+    }: {
+      insuranceId: string;
+      message: string;
+    }) => {
+      const response = await api.request(
+        {
+          url: `/partners/cancel/${insuranceId}`,
+          method: "POST",
+          params: {
+            message,
+          },
+        },
+        true
+      );
+      return response.data;
+    },
+  });
+};
+
+interface TimelineParams {
+  companyId?: string | number;
+  proposalId?: string | number;
+  continuationToken?: string;
+}
+
+
+
+
+export const useGetTimeline = ({ companyId, proposalId, continuationToken }: TimelineParams) => {
+  return useQuery({
+    queryKey: ["timeline", companyId, proposalId, continuationToken],
+    queryFn: async () => {
+      let url = "";
+      let params = {};
+
+      if (companyId) {
+        url = `/companies/${companyId}/timeline`;
+        params = { continuationToken };
+      } else if (proposalId) {
+        url = `/proposals/${proposalId}/timeline`;
+      } else {
+        throw new Error("ID necessário");
+      }
+
+      const resp = await api.request({
+        url,
+        method: "GET",
+        params,
+      });
+
+      return resp.data;
+    },
+    enabled: !!companyId || !!proposalId,
+    staleTime: 1000 * 60,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+};

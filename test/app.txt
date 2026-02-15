@@ -1,0 +1,89 @@
+src\client\src\App.tsx
+
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  redirect,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
+
+import { Layout } from "./components/core/layout";
+import Login from "./pages/auth";
+import Home from "./pages/home";
+import Issue from "./pages/issueForm";
+import MyPolicies from "./pages/mypolicies";
+import MyProfile from "./pages/myprofile";
+import MySuppliers from "./pages/mysuppliers";
+import Settings from "./pages/settings";
+import Timeline from "./pages/timeline";
+
+
+declare global {
+  interface Window {
+    OnTest: (data: unknown) => Promise<void>;
+    clarity: {
+      init: (id: string) => void;
+    };
+  }
+}
+
+if (process.env.GRANTO_ENVIRONMENT !== "Production") {
+  //console.log("'OnTest' is enabled at development environment: " + process.env.GRANTO_ENVIRONMENT);
+  window.OnTest = async (data: unknown) => {
+    try {
+      const response = await fetch(
+        "/auth/external-cb?partner_id=5edc31edd972dbf541d9273d604512280",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        console.error("Erro na requisição:", response.statusText);
+        return;
+      }
+
+      const locationHeader = response.headers.get("Location");
+      if (locationHeader) {
+        console.log("Location:", locationHeader);
+      } else {
+        console.log('Cabeçalho "Location" não encontrado');
+      }
+    } catch (error) {
+      console.error("Erro na requisição:", error);
+    }
+  };
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path="/" element={<Layout />}>
+        <Route path="/" loader={() => redirect("/home")} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/issue" element={<Issue />} />
+        <Route path="/mypolicies" element={<MyPolicies />} />
+        <Route path="/profile" element={<MyProfile />} />
+        <Route path="/timeline" element={<Timeline />} />
+        <Route path="/mysuppliers" element={<MySuppliers />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/search" element={<h1>Consulta de apólice</h1>} />
+
+        
+
+      </Route>
+      <Route path="*" element={<h1>404</h1>} />
+      <Route path="/login" element={<Login />} />
+    </>
+  )
+);
+
+const App = () => <RouterProvider router={router} />;
+
+export default App;

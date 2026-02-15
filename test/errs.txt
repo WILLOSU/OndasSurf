@@ -1,0 +1,22 @@
+src/components/molecules/TimeLine/TimeLine.mapper.ts
+
+O seu Mapper ignora o evento ProposalCreated que aparece no log. 
+Você precisa incluí-lo no dicionário de títulos e na lista de 
+detalhes
+
+src/client/src/components/molecules/InsuranceList/index.tsx
+O seu log mostra que os dados estão "envelopados" em uma propriedade 
+chamada items. Se você passar a resposta bruta, o Mapper não 
+encontrará a lista para processar.
+
+Por que corrigir nesses locais?
+No Mapper: Porque o backend enviou uma "etiqueta" (ProposalCreated) 
+que o front-end ainda não conhecia, então ele não sabia que nome 
+dar ao evento.
+
+No Componente: Porque o backend enviou uma "caixa" (items) e 
+você precisa abrir essa caixa antes de entregar os itens 
+para o tradutor.
+
+William, se você ajustar o nome do evento no Mapper e acessar o .
+items no componente, o modal deixará de ser vazio na hora.

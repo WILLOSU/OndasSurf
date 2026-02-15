@@ -45,7 +45,7 @@ describe('Users functional tests', () => {
       const newUser = {
         name: 'John Doe',
         email: 'john@mail.com',
-        password: '1234'
+        password: '1234',
       };
 
       await global.testRequest.post('/users').send(newUser);
@@ -55,7 +55,8 @@ describe('Users functional tests', () => {
       expect(response.body).toEqual({
         code: 409,
         error: 'Conflict',
-        message: 'User validation failed: email: already exists in the database.',
+        message:
+          'User validation failed: email: already exists in the database.',
       });
     });
   });
@@ -65,16 +66,16 @@ describe('Users functional tests', () => {
       const newUser = {
         name: 'John Doe',
         email: 'john@mail.com',
-        password: '1234'
+        password: '1234',
       };
       await new User(newUser).save();
       const response = await global.testRequest
         .post('/users/authenticate')
         .send({ email: newUser.email, password: newUser.password });
-        
-        expect(response.body).toEqual(
-          expect.objectContaining({token: expect.any(String),})
-        );
+
+      expect(response.body).toEqual(
+        expect.objectContaining({ token: expect.any(String) })
+      );
     });
     it('Should return UNAUTHORIZED if the user with given email is not found', async () => {
       const response = await global.testRequest
@@ -88,14 +89,49 @@ describe('Users functional tests', () => {
       const newUser = {
         name: 'John Doe',
         email: 'john@mail.com',
-        password: '1234'
+        password: '1234',
       };
       await new User(newUser).save();
       const response = await global.testRequest
         .post('/users/authenticate')
         .send({ email: newUser.email, password: 'different-password' });
-        
-        expect(response.status).toBe(401);
+
+      expect(response.status).toBe(401);
+    });
+  });
+
+  describe('When getting user profile info', () => {
+    it(`Should return the token's owner profile information`, async () => {
+      const newUser = {
+        name: 'John Doe',
+        email: 'john@mail.com',
+        password: '1234',
+      };
+      const user = await new User(newUser).save();
+      const token = AuthService.generateToken(user.toJSON());
+      const { body, status } = await global.testRequest
+        .get('/users/me')
+        .set({ 'x-acess-token': token });
+
+      expect(status).toBe(200);
+      expect(body).toMatchObject(JSON.parse(JSON.stringify(user)));
+    });
+
+    it(`Should return Not Found, when the user is not found`, async () => {
+      const newUser = {
+        name: 'John Doe',
+        email: 'john@mail.com',
+        password: '1234',
+      };
+      // create a new user but dont't save it
+      const user = new User(newUser);
+      const token = AuthService.generateToken(user.toJSON());
+      const { body, status } = await global.testRequest
+        .get('/users/me')
+        .set({ 'x-acess-token': token });
+
+      expect(status).toBe(404);
+      expect(body.message).toBe('User not found!');
     });
   });
 });

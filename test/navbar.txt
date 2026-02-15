@@ -1,0 +1,192 @@
+src\client\src\components\organisms\Navbar\index.tsx
+
+import { CaretDown, FlowArrow } from "phosphor-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+
+import _barra from "@/assets/_barra.svg";
+import _effecti from "@/assets/_effecti.svg";
+import _logoCorp from "@/assets/_granto_corp.svg";
+import _logoSuppliers from "@/assets/_granto_suppliers.svg";
+import _sign_out from "@/assets/_sign-out.svg";
+import _user_circle from "@/assets/_user-circle.svg";
+import _whatsapp_cinza from "@/assets/_whatsapp_cinza.svg";
+import _gear from "@/assets/_gear.svg";
+import { useAmbient } from "@/hooks/useAmbient";
+import { useDownloadAndSupport } from "@/hooks/useDownloadAndSupport";
+import { useAuthStore } from "@/stores/authStore";
+import { useMyStore } from "@/stores/sessionStore";
+import { primitiveColors } from "@granto-umbrella/umbrella-components";
+
+import {
+  Dropdown,
+  DropdownItem,
+  LogoContainer,
+  Menu,
+  NavbarContainer,
+  UserProfile,
+} from "./styles";
+
+const NavbarComponent = () => {
+  const { clearData } = useMyStore();
+  const { user, logout } = useAuthStore();
+  const { isSupply } = useAmbient();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { onSupportClick } = useDownloadAndSupport();
+  const isSDK = user?.isPartner;
+  const handleDropdownToggle = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+  const handleLogout = () => {
+    clearData();
+    logout().then(() =>
+      setTimeout(() => {
+        window.location.reload();
+      }, 50),
+    );
+  };
+  const fullName = user?.name || user?.displayName || user?.username || "";
+
+  const avatarSrc = user?.img || user?.picture;
+  const emailInitials = user?.username
+    ? user.username.slice(0, 2).toUpperCase()
+    : "";
+
+  return (
+    <NavbarContainer>
+      <LogoContainer>
+        <img
+          src={isSupply ? _logoSuppliers : _logoCorp}
+          width={isSupply ? 133 : 89}
+          alt="umbrella logo"
+        />
+        {isSDK && (
+          <>
+            <img src={_barra} alt="barra separadora" />
+            <img style={{ marginTop: 10 }} src={_effecti} alt="effecti logo" />
+          </>
+        )}
+        <Menu>
+          <a
+            href="/home"
+            data-testid="link_nav_pagina_inicial"
+            id="link_nav_pagina_inicial"
+          >
+            Página Inicial
+          </a>
+          <a
+            href="/mypolicies"
+            data-testid="link_nav_minhas_apolices"
+            id="link_nav_minhas_apolices"
+          >
+            Minhas apólices
+          </a>
+          {isSupply && (
+            <a
+              href="/mysuppliers"
+              data-testid="link_nav_meus_fornecedores"
+              id="link_nav_meus_fornecedores"
+            >
+              Meus fornecedores
+            </a>
+          )}
+          <Link
+            to="/issue"
+            state={undefined}
+            data-testid="link_nav_emitir_apolice"
+            id="link_nav_emitir_apolice"
+          >
+            Emitir apólice
+          </Link>
+          {/*<a>Financeiro</a>*/}
+        </Menu>
+      </LogoContainer>
+      {/*<SearchWrapper>
+        <SearchContainer>
+          <SearchIconStyled className="icon_search" />
+          <input
+            size="sm"
+            className="input_search"
+            type="text"
+            placeholder="Pesquise sua apólice"
+            onInput={handleSearchChange}
+          />
+        </SearchContainer>
+      </SearchWrapper>*/}
+      <UserProfile onClick={handleDropdownToggle}>
+        <div className="avatar">
+          {avatarSrc ? (
+            <img src={avatarSrc} alt={`Foto de ${fullName}`} />
+          ) : (
+            <div className="initials">{emailInitials}</div>
+          )}
+        </div>
+        <div className="details">
+          <span>{fullName}</span>
+          <small>{user?.position ? user.position : "---"}</small>
+        </div>
+        <CaretDown
+          data-testid="btn_home_usuario"
+          id="btn_home_usuario"
+          color={primitiveColors.gray[300]}
+          onClick={handleDropdownToggle}
+        />
+        {isDropdownOpen && (
+          <Dropdown>
+            <DropdownItem
+              onClick={() => onSupportClick(isSupply)}
+              data-testid="btn_home_sair"
+              id="btn_home_sair"
+            >
+              <img src={_whatsapp_cinza} alt="chat com especialista" />
+              Chat com especialista
+            </DropdownItem>
+            <DropdownItem
+              as={Link}
+              to="/settings"
+              data-testid="btn_nav_configuracoes"
+              id="btn_nav_configuracoes"
+              onClick={() => setIsDropdownOpen(false)}
+            >
+              <img src={_gear} alt="configurações" />
+              Configurações
+            </DropdownItem>
+            <DropdownItem
+              as={Link}
+              to="/profile"
+              data-testid="btn_nav_meu_perfil"
+              id="btn_nav_meu_perfil"
+              onClick={() => setIsDropdownOpen(false)}
+            >
+              <img src={_user_circle} alt="meu perfil" />
+              Meu perfil
+            </DropdownItem>
+            <DropdownItem
+              as={Link}
+              to="/timeline"
+              data-testid="btn_nav_linha_do_tempo"
+              onClick={() => setIsDropdownOpen(false)}
+            >
+              <FlowArrow
+                size={20}
+                weight="bold"
+                color={primitiveColors.gray[900]}
+              />
+              Linha do Tempo
+            </DropdownItem>
+            <DropdownItem
+              onClick={handleLogout}
+              data-testid="btn_home_sair"
+              id="btn_home_sair"
+              $type="out"
+            >
+              <img src={_sign_out} alt="sair" />
+              Sair
+            </DropdownItem>
+          </Dropdown>
+        )}
+      </UserProfile>
+    </NavbarContainer>
+  );
+};
+export default NavbarComponent;
