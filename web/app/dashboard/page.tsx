@@ -7,7 +7,7 @@ import { getForecast, type ForecastByTime } from "@/lib/forecast-client";
 import { ForecastTable } from "@/components/forecast-table";
 import { ForecastTimeSelector } from "@/components/forecast-time-selector";
 import { BeachForm } from "@/components/beach-form";
-import { BeachMap } from "@/components/beach-map-google";
+import { BeachMap } from "@/components/beach-map-wrapper";
 import { WaveChart, WindChart } from "@/components/wave-charts";
 import { DataStatusBadge } from "@/components/data-status-badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -73,8 +73,8 @@ function DashboardSkeleton() {
       </div>
       <Skeleton className="h-10 w-full rounded-lg" />
       <div className="grid gap-6 lg:grid-cols-2">
-        <Skeleton className="h-[500px] rounded-xl" />
-        <Skeleton className="h-[500px] rounded-xl" />
+        <Skeleton className="h-125 rounded-xl" />
+        <Skeleton className="h-125 rounded-xl" />
       </div>
     </div>
   );
@@ -249,7 +249,7 @@ export default function DashboardPage() {
             <span className="text-sm font-medium">Filtros:</span>
           </div>
 
-          <div className="relative flex-1 min-w-[200px]">
+          <div className="relative flex-1 min-w-50">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Buscar praia..."
@@ -260,7 +260,7 @@ export default function DashboardPage() {
           </div>
 
           <Select value={ratingFilter} onValueChange={setRatingFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-45">
               <Star className="mr-2 h-4 w-4" />
               <SelectValue placeholder="Rating mínimo" />
             </SelectTrigger>
@@ -273,7 +273,7 @@ export default function DashboardPage() {
           </Select>
 
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-45">
               <SelectValue placeholder="Ordenar por" />
             </SelectTrigger>
             <SelectContent>

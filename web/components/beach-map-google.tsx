@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Map as MapIcon, Satellite } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+//import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Beach {
   name: string;
@@ -185,7 +185,7 @@ export function BeachMap({ beaches, selectedBeach, onBeachSelect }: BeachMapProp
       <CardContent>
         <div
           ref={mapRef}
-          className="h-[400px] w-full rounded-lg overflow-hidden border border-border/60"
+          className="h-100 w-full rounded-lg overflow-hidden border border-border/60"
         />
         
         {/* Lista de praias abaixo do mapa */}
