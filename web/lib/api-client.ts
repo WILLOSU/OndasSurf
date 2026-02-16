@@ -25,7 +25,7 @@ export async function apiClient<T = unknown>(
     ...customHeaders,
   };
 
-  if (token) {
+  if (token && token !== "null" && token !== "undefined") {
     headers["x-access-token"] = token;
   }
 
