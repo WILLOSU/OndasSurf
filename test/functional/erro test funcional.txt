@@ -315,7 +315,7 @@ $
 
 arquivos envolvidos
 
-src/test/functional/beaches.ts
+test\functional\beaches.test.ts
 
 import { Beach } from '@src/models/beach';
 import { User } from '@src/models/users';
@@ -470,6 +470,8 @@ describe('Beach forecast functional tests', () => {
 
 
 src/clients;stormGlass.ts
+
+
 import axios, { AxiosStatic } from 'axios';
 import { InternalError } from '@src/util/errors/internal-error';
 import config, { IConfig } from 'config';
@@ -823,6 +825,16 @@ describe('Beach forecast functional tests', () => {
 // ISSO QUE EU ESPERO NO FINAL DA ROTA, QUERO QUE ELA ME DEVOVA O FORECAST
 
 // mude de toBe para toEquals
+
+
+arquivos envolvidos
+src/test/functional/beaches.ts
+src/test/functional/forecast.test.ts
+src/clients;stormGlass.ts
+src/services/forecast.ts
+src/controllers/forecast.ts
+
+
 
 
 
