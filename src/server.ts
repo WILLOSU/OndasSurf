@@ -3,6 +3,12 @@ import bodyParser from 'body-parser';
 import { Server } from '@overnightjs/core';
 import pinoHttp from 'pino-http';
 import cors from 'cors';
+
+import apiSchema from './api.schema.json';
+import swaggerUi from 'swagger-ui-express';
+import * as OpenApiValidator from 'express-openapi-validator';
+import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
+
 import { ForecastController } from './controllers/forecast';
 import { Application } from 'express';
 import * as database from './database';
@@ -17,6 +23,7 @@ export class SetupServer extends Server {
 
   public async init(): Promise<void> {
     this.setupExpress();
+    await this.docsSetup();
     this.setupControllers();
     await this.databaseSetup();
   }
@@ -24,9 +31,7 @@ export class SetupServer extends Server {
   private setupExpress(): void {
     this.app.use(bodyParser.json());
     this.app.use(pinoHttp({ logger }));
-    this.app.use(cors({
-      origin: '*'
-    }));
+    this.app.use(cors({ origin: '*' }));
   }
 
   private setupControllers(): void {
@@ -40,14 +45,21 @@ export class SetupServer extends Server {
     ]);
   }
 
+  // UM UNICO docsSetup com Swagger UI + OpenAPI Validator
+private async docsSetup(): Promise<void> {
+  this.app.use('/docs', swaggerUi.serve, swaggerUi.setup(apiSchema));
+  this.app.use(
+    OpenApiValidator.middleware({
+      apiSpec: apiSchema as OpenAPIV3.DocumentV3,
+      validateRequests: true,
+      validateResponses: true,
+      ignorePaths: /docs/,  
+    })
+  );
+}
+
   private async databaseSetup(): Promise<void> {
-    try {
-      await database.connect();
-      logger.info('MongoDB conectado com sucesso!');
-    } catch (error) {
-      console.error('Erro ao conectar no MongoDB:', error);
-      throw error;
-    }
+    await database.connect();
   }
 
   public async close(): Promise<void> {
