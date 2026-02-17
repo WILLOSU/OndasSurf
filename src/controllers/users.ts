@@ -37,8 +37,7 @@ export class UsersController extends BaseController {
         message: 'Password does not match',
       });
     }
-    const token = AuthService.generateToken(user.toJSON());
-    return res.send({ ...user.toJSON(), ...{ token } });
+
   }
 
   @Get('me')

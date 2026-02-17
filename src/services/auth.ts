@@ -22,18 +22,22 @@ export default class AuthService {
     return await bcrypt.compare(password, hashedPassword);
   }
 
-  public static generateToken(payload: object): string {
+  public static generateToken(payload: Record<string, unknown>): string {
     const secret = config.get<string>('App.auth.key');
     const expiresIn = config.get<string | number>('App.auth.tokenExpiresIn');
 
-    return jwt.sign(payload, secret, {
+    const safePayload = {
+      ...payload,
+      ...('_id' in payload && { _id: String(payload._id) }),
+    };
+
+    return jwt.sign(safePayload, secret, {
       expiresIn: expiresIn,
     } as jwt.SignOptions);
   }
 
-  public static decodeToken(token: string): object {
-    return jwt.verify(token, config.get('App.auth.key')) as DecodedUser;
-    
+  public static decodeToken(token: string): DecodedUser {
+    const secret = config.get<string>('App.auth.key');
+    return jwt.verify(token, secret) as DecodedUser;
   }
-
 }

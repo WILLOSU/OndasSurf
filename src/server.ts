@@ -15,6 +15,7 @@ import * as database from './database';
 import { BeachesController } from './controllers/beaches';
 import { UsersController } from './controllers/users';
 import logger from './logger';
+import { apiErrorValidator } from './middlewares/api-error-validator';
 
 export class SetupServer extends Server {
   constructor(private port: string | number = 3000) {
@@ -26,6 +27,7 @@ export class SetupServer extends Server {
     await this.docsSetup();
     this.setupControllers();
     await this.databaseSetup();
+    this.setupErrorHandlers();
   }
 
   private setupExpress(): void {
@@ -43,6 +45,10 @@ export class SetupServer extends Server {
       beachesController,
       usersController,
     ]);
+  }
+
+    private setupErrorHandlers(): void {
+    this.app.use(apiErrorValidator);
   }
 
   // UM UNICO docsSetup com Swagger UI + OpenAPI Validator

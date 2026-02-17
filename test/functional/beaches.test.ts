@@ -15,9 +15,9 @@ describe('Beaches functional tests', () => {
     await Beach.deleteMany({});
     await User.deleteMany({});
     const user = await new User(defaultUser).save();
-    token = AuthService.generateToken(user.toJSON());
+    token = AuthService.generateToken(user.id);
   });
-  
+
   describe('When creating a new beach', () => {
     it('should create a beach with success', async () => {
       const newBeach = {
@@ -28,10 +28,10 @@ describe('Beaches functional tests', () => {
       };
 
       const response = await global.testRequest
-      .post('/beaches')
-      .set({'x-access-token': token})
-      .send(newBeach);
-      
+        .post('/beaches')
+        .set({ 'x-access-token': token })
+        .send(newBeach);
+
       expect(response.status).toBe(201);
       //Object containing matches the keys and values, even if includes other keys such as id.
       expect(response.body).toEqual(expect.objectContaining(newBeach));
@@ -45,16 +45,16 @@ describe('Beaches functional tests', () => {
         position: 'E',
       };
       const response = await global.testRequest
-      .post('/beaches')
-      .set({'x-access-token': token})
-      .send(newBeach);
+        .post('/beaches')
+        .set({ 'x-access-token': token })
+        .send(newBeach);
 
+      //tests will be broken, not middleware
       expect(response.status).toBe(400);
       expect(response.body).toEqual({
-          code: 400,
-          error: 'Bad Request',
-          message: expect.stringMatching(/Beach validation failed: lat: Cast to Number failed for value "invalid_string"/),
-        });
+        code: 400,
+        error: 'Bad Request',
+        message: 'request.body.lat should be number',
       });
     });
 
@@ -62,4 +62,4 @@ describe('Beaches functional tests', () => {
       //TODO think in a way to throw a 500
     });
   });
-
+});
