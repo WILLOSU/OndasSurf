@@ -16,11 +16,12 @@ declare global {
 
 let server: SetupServer;
 
-beforeAll(async() => {
+// test/jest-setup.ts
+beforeAll(async () => {
   server = new SetupServer();
   await server.init();
   global.testRequest = supertest(server.getApp()) as unknown as SuperTest<Test>;
-});
+}, 60000); // ← aumente para 60 segundos
 
 afterAll(async () => {
   await server.close();

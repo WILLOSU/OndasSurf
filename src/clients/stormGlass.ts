@@ -84,11 +84,8 @@ export class StormGlass {
 
       return this.normalizeResponse(response.data);
     } catch (err: unknown) {
-      console.error(
-        '❌ Erro ao buscar dados da StormGlass, usando mock como fallback',
-        err
-      );
-      return this.getMockedData();
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      throw new ClientRequestError(message); // ← LANÇA o erro ao invés de engolir
     }
   }
 

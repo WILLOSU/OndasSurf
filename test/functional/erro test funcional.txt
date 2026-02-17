@@ -1,0 +1,828 @@
+Me ajude a resolver os erros o jest test unitários
+
+usando yarn test:funcional para prossiguir com o projeto
+
+LINK DO GITHUB REPOSITÓRIO = https://github.com/WILLOSU/OndasSurf
+
+ERROS QUE ESTOU TENDO
+
+William Mota@NB-A33 MINGW64 ~/Desktop/node-typscript-api (develop)
+$ yarn test:functional
+yarn run v1.22.22
+$ jest --projects ./test --runInBand
+ts-jest[ts-jest-transformer] (WARN) Define `ts-jest` config under `globals` is deprecated. Please do
+transform: {
+    <transform_regex>: ['ts-jest', { /* ts-jest config goes here in Jest */ }],
+},
+See more at https://kulshekhar.github.io/ts-jest/docs/getting-started/presets#advanced
+{"level":30,"time":1771329757595,"pid":16392,"hostname":"NB-A33","msg":"Tentando conectar ao MongoDB..."}
+{"level":30,"time":1771329757595,"pid":16392,"hostname":"NB-A33","url":"mongodb://localhost:","msg":"URL (primeiros 20 chars)"}
+{"level":30,"time":1771329757595,"pid":16392,"hostname":"NB-A33","nodeEnv":"test","msg":"NODE_ENV"}
+ FAIL   functional-tests  test/functional/beaches.test.ts (42.333 s)
+  ● Beaches functional tests › When creating a new beach › should create a beach with success
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      17 | let server: SetupServer;
+      18 |
+    > 19 | beforeAll(async() => {
+         | ^
+      20 |   server = new SetupServer();
+      21 |   await server.init();
+      22 |   global.testRequest = supertest(server.getApp()) as unknown as SuperTest<Test>;
+
+      at Object.<anonymous> (test/jest-setup.ts:19:1)
+
+  ● Beaches functional tests › When creating a new beach › should return 422 when there is a validation error
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      17 | let server: SetupServer;
+      18 |
+    > 19 | beforeAll(async() => {
+         | ^
+      20 |   server = new SetupServer();
+      21 |   await server.init();
+      22 |   global.testRequest = supertest(server.getApp()) as unknown as SuperTest<Test>;
+
+      at Object.<anonymous> (test/jest-setup.ts:19:1)
+
+  ● Beaches functional tests › should return 500 when there is any error other than validation error
+
+    thrown: "Exceeded timeout of 30000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      17 | let server: SetupServer;
+      18 |
+    > 19 | beforeAll(async() => {
+         | ^
+      20 |   server = new SetupServer();
+      21 |   await server.init();
+      22 |   global.testRequest = supertest(server.getApp()) as unknown as SuperTest<Test>;
+
+      at Object.<anonymous> (test/jest-setup.ts:19:1)
+
+{"level":30,"time":1771329787596,"pid":16392,"hostname":"NB-A33","msg":"MongoDB conectado com sucesso!"}
+{"level":30,"time":1771329790391,"pid":16392,"hostname":"NB-A33","msg":"Tentando conectar ao MongoDB..."}
+{"level":30,"time":1771329790391,"pid":16392,"hostname":"NB-A33","url":"mongodb://localhost:","msg":"URL (primeiros 20 chars)"}
+{"level":30,"time":1771329790391,"pid":16392,"hostname":"NB-A33","nodeEnv":"test","msg":"NODE_ENV"}
+{"level":30,"time":1771329790417,"pid":16392,"hostname":"NB-A33","msg":"MongoDB conectado com sucesso!"}
+{"level":30,"time":1771329790765,"pid":16392,"hostname":"NB-A33","msg":"Preparing the forecast for 1 beaches"}
+{"level":30,"time":1771329790805,"pid":16392,"hostname":"NB-A33","req":{"id":1,"method":"GET","url":"/forecast","query":{},"params":{},"headers":{"host":"127.0.0.1:51616","accept-encoding":"gzip, deflate","x-access-token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJlbWFpbCI6ImpvaG4yQG1haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkaFloZFRhQmFTdDhRdGhvMEF1TnpkZXJTSGZMa2xNQlhLWDdBZEswOHl6QmU2ckl1UU1HRHEiLCJpZCI6IjY5OTQ1OGZlMzk1M2M4NTkyM2E1MTU4YSIsImlhdCI6MTc3MTMyOTc5MCwiZXhwIjoxNzcxNDE2MTkwfQ.OAcHhyG22RvO8kDsGwx5b_Lvw0tGD-DXevT-Z7dONZ4","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":51617},"res":{"statusCode":200,"headers":{"x-powered-by":"Express","access-control-allow-origin":"*","content-type":"application/json; charset=utf-8","content-length":"911","etag":"W/\"38f-CPgpgM7vB3PrUbCKJ7HIb1a89jM\""}},"responseTime":54,"msg":"request completed"}
+{"level":30,"time":1771329790965,"pid":16392,"hostname":"NB-A33","msg":"Preparing the forecast for 1 beaches"}
+{"level":30,"time":1771329791113,"pid":16392,"hostname":"NB-A33","req":{"id":2,"method":"GET","url":"/forecast","query":{},"params":{},"headers":{"host":"127.0.0.1:51618","accept-encoding":"gzip, deflate","x-access-token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9obiBEb2UiLCJlbWFpbCI6ImpvaG4yQG1haWwuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkV29qWDJ4L0ZHNHk0YTdSbmduSWI2ZU9IaHJ4eWRkQ3hIWVU1eFBGS1g4Mm9mZWFhRVdWU2kiLCJpZCI6IjY5OTQ1OGZlMzk1M2M4NTkyM2E1MTU5MiIsImlhdCI6MTc3MTMyOTc5MCwiZXhwIjoxNzcxNDE2MTkwfQ.OulXiL16uAqasa0rQtqu-zBylaa9rjRsxV7xcObgM7U","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":51619},"res":{"statusCode":200,"headers":{"x-powered-by":"Express","access-control-allow-origin":"*","content-type":"application/json; charset=utf-8","content-length":"9414","etag":"W/\"24c6-vdeOnig0Awxm572VpdHn9a5JhSU\""}},"responseTime":157,"msg":"request completed"}
+ FAIL   functional-tests  test/functional/forecast.test.ts
+  ● Console                                                                                                           
+
+    console.error
+      ❌ Erro ao buscar dados da StormGlass, usando mock como fallback AxiosError: Something went wrong
+          at Function.from (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\axios\lib\core\AxiosError.js:7:28)
+          at RedirectableRequest.handleRequestError (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\axios\lib\adapters\http.js:820:25)
+          at RedirectableRequest.emit (node:events:518:28)
+          at ClientRequest.eventHandlers.<computed> (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\follow-redirects\index.js:49:24)
+          at ClientRequest.emit (node:events:518:28)
+          at emitErrorEvent (node:_http_client:104:11)
+          at MockHttpSocket.socketErrorListener (node:_http_client:518:5)
+          at MockHttpSocket.emit (node:events:518:28)
+          at MockHttpSocket.emit (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\@mswjs\interceptors\src\interceptors\ClientRequest\MockHttpSocket.ts:165:12)
+          at MockHttpSocket.destroy (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\@mswjs\interceptors\src\interceptors\ClientRequest\MockHttpSocket.ts:175:12)
+          at MockHttpSocket.errorWith (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\@mswjs\interceptors\src\interceptors\ClientRequest\MockHttpSocket.ts:458:10)
+          at Object.errorWith (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\@mswjs\interceptors\src\interceptors\ClientRequest\index.ts:165:18)
+          at RequestController.errorWith (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\@mswjs\interceptors\src\RequestController.ts:106:17)
+          at Object.errorWith (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\@mswjs\interceptors\src\utils\handleRequest.ts:171:38)
+          at RequestController.errorWith (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\@mswjs\interceptors\src\RequestController.ts:106:17)
+          at _Emitter.<anonymous> (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\nock\lib\intercept.js:378:16)
+          at emitAsync (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\@mswjs\interceptors\src\utils\emitAsync.ts:23:20)
+          at Object.handleRequest (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\@mswjs\interceptors\src\utils\handleRequest.ts:176:13)
+          at processTicksAndRejections (node:internal/process/task_queues:105:5)
+          at ClientRequestInterceptor.onRequest (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\@mswjs\interceptors\src\interceptors\ClientRequest\index.ts:170:5)
+          at Axios.request (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\axios\lib\core\Axios.js:46:41)
+          at processTicksAndRejections (node:internal/process/task_queues:105:5)
+          at StormGlass.fetchPoints (C:\Users\William Mota\Desktop\node-typscript-api\src\clients\stormGlass.ts:74:24)
+          at Forecast.calculateRating (C:\Users\William Mota\Desktop\node-typscript-api\src\services\forecast.ts:51:22)
+          at Forecast.processForecastForBeaches (C:\Users\William Mota\Desktop\node-typscript-api\src\services\forecast.ts:31:29)
+          at ForecastController.getForecastForLoggedUser (C:\Users\William Mota\Desktop\node-typscript-api\src\controllers\forecast.ts:23:28) {
+        isAxiosError: true,
+        config: {
+          transitional: {
+            silentJSONParsing: true,
+            forcedJSONParsing: true,
+            clarifyTimeoutError: false,
+            legacyInterceptorReqResOrdering: true
+          },
+          adapter: [ 'xhr', 'http', 'fetch' ],
+          transformRequest: [ [Function: transformRequest] ],
+          transformResponse: [ [Function: transformResponse] ],
+          timeout: 0,
+          xsrfCookieName: 'XSRF-TOKEN',
+          xsrfHeaderName: 'X-XSRF-TOKEN',
+          maxContentLength: -1,
+          maxBodyLength: -1,
+          env: { FormData: [Function], Blob: [class Blob] },
+          validateStatus: [Function: validateStatus],
+          headers: Object [AxiosHeaders] {
+            Accept: 'application/json, text/plain, */*',
+            'Content-Type': undefined,
+            Authorization: 'test-token',
+            'User-Agent': 'axios/1.13.5',
+            'Accept-Encoding': 'gzip, compress, deflate, br'
+          },
+          method: 'get',
+          url: 'https://api.stormglass.io:443/v2/weather/point?params=swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed&source=noaa&end=1771502590&lat=-33.792726&lng=151.289824',
+          allowAbsoluteUrls: true,
+          data: undefined
+        },
+        request: <ref *1> Writable {
+          _events: {
+            close: undefined,
+            error: [Function: handleRequestError],
+            prefinish: undefined,
+            finish: undefined,
+            drain: undefined,
+            response: [Function: handleResponse],
+            socket: [Array],
+            abort: undefined
+          },
+          _writableState: WritableState {
+            highWaterMark: 16384,
+            length: 0,
+            corked: 0,
+            onwrite: [Function: bound onwrite],
+            writelen: 0,
+            bufferedIndex: 0,
+            pendingcb: 0,
+            [Symbol(kState)]: 17580812,
+            [Symbol(kBufferedValue)]: null
+          },
+          _maxListeners: undefined,
+          _options: {
+            maxRedirects: 21,
+            maxBodyLength: Infinity,
+            protocol: 'https:',
+            path: '/v2/weather/point?params=swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed&source=noaa&end=1771502590&lat=-33.792726&lng=151.289824',
+            method: 'GET',
+            headers: [Object: null prototype],
+            agents: [Object],
+            auth: undefined,
+            family: undefined,
+            beforeRedirect: [Function: dispatchBeforeRedirect],
+            beforeRedirects: [Object],
+            http2Options: undefined,
+            hostname: 'api.stormglass.io',
+            port: '',
+            agent: undefined,
+            nativeProtocols: [Object],
+            pathname: '/v2/weather/point',
+            search: '?params=swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed&source=noaa&end=1771502590&lat=-33.792726&lng=151.289824'
+          },
+          _ended: true,
+          _ending: true,
+          _redirectCount: 0,
+          _redirects: [],
+          _requestBodyLength: 0,
+          _requestBodyBuffers: [],
+          _eventsCount: 3,
+          _onNativeResponse: [Function (anonymous)],
+          _currentRequest: ClientRequest {
+            _events: [Object: null prototype],
+            _eventsCount: 7,
+            _maxListeners: undefined,
+            outputData: [],
+            outputSize: 0,
+            writable: true,
+            destroyed: false,
+            _last: true,
+            chunkedEncoding: false,
+            shouldKeepAlive: false,
+            maxRequestsOnConnectionReached: false,
+            _defaultKeepAlive: true,
+            useChunkedEncodingByDefault: false,
+            sendDate: false,
+            _removedConnection: false,
+            _removedContLen: false,
+            _removedTE: false,
+            strictContentLength: false,
+            _contentLength: 0,
+            _hasBody: true,
+            _trailer: '',
+            finished: true,
+            _headerSent: true,
+            _closed: false,
+            _header: 'GET /v2/weather/point?params=swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed&source=noaa&end=1771502590&lat=-33.792726&lng=151.289824 HTTP/1.1\r\n' +
+              'Accept: application/json, text/plain, */*\r\n' +
+              'Authorization: test-token\r\n' +
+              'User-Agent: axios/1.13.5\r\n' +
+              'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+              'Host: api.stormglass.io\r\n' +
+              'Connection: close\r\n' +
+              '\r\n',
+            _keepAliveTimeout: 0,
+            _onPendingData: [Function: nop],
+            agent: [MockHttpsAgent],
+            socketPath: undefined,
+            method: 'GET',
+            maxHeaderSize: undefined,
+            insecureHTTPParser: undefined,
+            joinDuplicateHeaders: undefined,
+            path: '/v2/weather/point?params=swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed&source=noaa&end=1771502590&lat=-33.792726&lng=151.289824',
+            _ended: false,
+            res: null,
+            aborted: false,
+            timeoutCb: null,
+            upgradeOrConnect: false,
+            parser: null,
+            maxHeadersCount: null,
+            reusedSocket: false,
+            host: 'api.stormglass.io',
+            protocol: 'https:',
+            _redirectable: [Circular *1],
+            [Symbol(shapeMode)]: false,
+            [Symbol(kCapture)]: false,
+            [Symbol(kBytesWritten)]: 0,
+            [Symbol(kNeedDrain)]: false,
+            [Symbol(corked)]: 0,
+            [Symbol(kChunkedBuffer)]: [],
+            [Symbol(kChunkedLength)]: 0,
+            [Symbol(kSocket)]: [MockHttpSocket],
+            [Symbol(kOutHeaders)]: [Object: null prototype],
+            [Symbol(errored)]: null,
+            [Symbol(kHighWaterMark)]: 16384,
+            [Symbol(kRejectNonStandardBodyWrites)]: false,
+            [Symbol(kUniqueHeaders)]: null
+          },
+          _currentUrl: 'https://api.stormglass.io/v2/weather/point?params=swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed&source=noaa&end=1771502590&lat=-33.792726&lng=151.289824',
+          _timeout: null,
+          [Symbol(shapeMode)]: true,
+          [Symbol(kCapture)]: false
+        },
+        cause: Error: Something went wrong
+            at start (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\nock\lib\playback_interceptor.js:136:17)
+            at C:\Users\William Mota\Desktop\node-typscript-api\node_modules\nock\lib\playback_interceptor.js:322:7   
+            at Immediate.cb (C:\Users\William Mota\Desktop\node-typscript-api\node_modules\nock\lib\common.js:530:9)  
+            at processImmediate (node:internal/timers:485:21)
+            at process.callbackTrampoline (node:internal/async_hooks:130:17)
+      }
+
+      85 |       return this.normalizeResponse(response.data);
+      86 |     } catch (err: unknown) {
+    > 87 |       console.error(
+         |               ^
+      88 |         '❌ Erro ao buscar dados da StormGlass, usando mock como fallback',
+      89 |         err
+      90 |       );
+
+      at StormGlass.fetchPoints (src/clients/stormGlass.ts:87:15)
+      at Forecast.calculateRating (src/services/forecast.ts:51:22)
+      at Forecast.processForecastForBeaches (src/services/forecast.ts:31:29)
+      at ForecastController.getForecastForLoggedUser (src/controllers/forecast.ts:23:28)
+
+  ● Beach forecast functional tests › should return 500 if something goes wrong during the processing
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 500
+    Received: 200
+
+      69 |       .set({ 'x-access-token': token });
+      70 |
+    > 71 |     expect(status).toBe(500);
+         |                    ^
+      72 |     expect(body).toEqual({
+      73 |       code: 500,
+      74 |       error: 'Internal Server Error',
+
+      at Object.<anonymous> (test/functional/forecast.test.ts:71:20)
+
+{"level":30,"time":1771329793977,"pid":16392,"hostname":"NB-A33","msg":"Tentando conectar ao MongoDB..."}
+{"level":30,"time":1771329793978,"pid":16392,"hostname":"NB-A33","url":"mongodb://localhost:","msg":"URL (primeiros 20 chars)"}
+{"level":30,"time":1771329793978,"pid":16392,"hostname":"NB-A33","nodeEnv":"test","msg":"NODE_ENV"}
+{"level":30,"time":1771329794028,"pid":16392,"hostname":"NB-A33","msg":"MongoDB conectado com sucesso!"}
+ PASS   functional-tests  test/functional/users.test.ts
+
+Test Suites: 2 failed, 1 passed, 3 total
+Tests:       3 failed, 8 skipped, 2 passed, 13 total
+Snapshots:   0 total
+Time:        49.668 s
+Ran all test suites.
+{"level":30,"time":1771329794455,"pid":16392,"hostname":"NB-A33","req":{"id":1,"method":"POST","url":"/users/authenticate","query":{},"params":{},"headers":{"host":"127.0.0.1:51625","accept-encoding":"gzip, deflate","content-type":"application/json","content-length":"43","connection":"close"},"remoteAddress":"::ffff:127.0.0.1","remotePort":51626},"res":{"statusCode":200,"headers":{"x-powered-by":"Express","access-control-allow-origin":"*","content-type":"application/json; charset=utf-8","content-length":"485","etag":"W/\"1e5-sLVAZf3hhKeSlQ9q0o6wfwL3hZ0\""}},"responseTime":128,"msg":"request completed"}
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+William Mota@NB-A33 MINGW64 ~/Desktop/node-typscript-api (develop)
+$
+
+arquivos envolvidos
+
+src/test/functional/beaches.ts
+
+import { Beach } from '@src/models/beach';
+import { User } from '@src/models/users';
+import AuthService from '@src/services/auth';
+
+describe('Beaches functional tests', () => {
+  const defaultUser = {
+    name: 'John Doe',
+    email: 'john2@mail.com',
+    password: '1234',
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let token: string;
+  beforeEach(async () => {
+    await Beach.deleteMany({});
+    await User.deleteMany({});
+    const user = await new User(defaultUser).save();
+    token = AuthService.generateToken(user.toJSON());
+  });
+  
+  describe('When creating a new beach', () => {
+    it('should create a beach with success', async () => {
+      const newBeach = {
+        lat: -33.792726,
+        lng: 151.289824,
+        name: 'Manly',
+        position: 'E',
+      };
+
+      const response = await global.testRequest
+      .post('/beaches')
+      .set({'x-access-token': token})
+      .send(newBeach);
+      
+      expect(response.status).toBe(201);
+      //Object containing matches the keys and values, even if includes other keys such as id.
+      expect(response.body).toEqual(expect.objectContaining(newBeach));
+    });
+
+    it('should return 422 when there is a validation error', async () => {
+      const newBeach = {
+        lat: 'invalid_string',
+        lng: 151.289824,
+        name: 'Manly',
+        position: 'E',
+      };
+      const response = await global.testRequest
+      .post('/beaches')
+      .set({'x-access-token': token})
+      .send(newBeach);
+
+      expect(response.status).toBe(422);
+      expect(response.body).toEqual({
+          code: 422,
+          error: 'Unprocessable Entity',
+          message: expect.stringMatching(/Beach validation failed: lat: Cast to Number failed for value "invalid_string"/),
+        });
+      });
+    });
+
+    it.skip('should return 500 when there is any error other than validation error', async () => {
+      //TODO think in a way to throw a 500
+    });
+  });
+
+src/test/functional/forecast.test.ts
+
+/* eslint-disable @typescript-eslint/triple-slash-reference */
+/// <reference path="../globals.d.ts" />
+
+import { Beach, GeoPosition } from '@src/models/beach';
+import stormGlassWeather3HoursFixture from '@test/fixtures/stormglass_weather_3_hours.json';
+import nock from 'nock';
+import apiForecastResponse1BeachFixture from '@test/fixtures/api.forecast_response_1_beach.json';
+import { User } from '@src/models/users';
+import AuthService from '@src/services/auth';
+
+describe('Beach forecast functional tests', () => {
+  const defaultUser = {
+    name: 'John Doe',
+    email: 'john2@mail.com',
+    password: '1234',
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let token: string;
+  beforeEach(async () => {
+    await Beach.deleteMany({});
+    await User.deleteMany({});
+    const user = await new User(defaultUser).save();
+    const defaultBeach = {
+      lat: -33.792726,
+      lng: 151.289824,
+      name: 'Manly',
+      position: GeoPosition.E,
+      user: user._id,
+    };
+    await new Beach(defaultBeach).save();
+
+    token = AuthService.generateToken(user.toJSON());
+  });
+
+  it('should return a forecast with just a few times', async () => {
+    nock('https://api.stormglass.io:443', {
+      encodedQueryParams: true,
+      reqheaders: {
+        Authorization: (): boolean => true,
+      },
+    })
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+      .get('/v2/weather/point')
+      .query(true)
+      .reply(200, stormGlassWeather3HoursFixture);
+
+    const { body, status } = await global.testRequest
+      .get('/forecast')
+      .set({ 'x-access-token': token });
+    expect(status).toBe(200);
+    expect(body).toEqual(apiForecastResponse1BeachFixture);
+  }, 10000);
+
+  it('should return 500 if something goes wrong during the processing', async () => {
+    nock('https://api.stormglass.io:443', {
+      encodedQueryParams: true,
+      reqheaders: {
+        Authorization: (): boolean => true,
+      },
+    })
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+      .get('/v2/weather/point')
+      .query(true)
+      .replyWithError('Something went wrong');
+
+    const { status, body } = await global.testRequest
+      .get('/forecast')
+      .set({ 'x-access-token': token });
+
+    expect(status).toBe(500);
+    expect(body).toEqual({
+      code: 500,
+      error: 'Internal Server Error',
+      message: 'Something went wrong',
+    });
+  }, 10000);
+});
+
+// o super teste bate em um rota e compare a resposta
+// ISSO QUE EU ESPERO NO FINAL DA ROTA, QUERO QUE ELA ME DEVOVA O FORECAST
+
+// mude de toBe para toEquals
+
+
+src/clients;stormGlass.ts
+import axios, { AxiosStatic } from 'axios';
+import { InternalError } from '@src/util/errors/internal-error';
+import config, { IConfig } from 'config';
+
+export interface StormGlassPointSource {
+  [key: string]: number;
+}
+
+export interface StormGlassPoint {
+  readonly time: string;
+  readonly waveDirection: StormGlassPointSource;
+  readonly swellDirection: StormGlassPointSource;
+  readonly swellPeriod: StormGlassPointSource;
+  readonly swellHeight: StormGlassPointSource;
+  readonly waveHeight: StormGlassPointSource;
+  readonly windDirection: StormGlassPointSource;
+  readonly windSpeed: StormGlassPointSource;
+}
+
+export class ClientRequestError extends InternalError {
+  constructor(message: string) {
+    const internalMessage =
+      'Unexpected error when tyring to comunicate to StormGlass';
+    super(`${internalMessage}: ${message}`);
+  }
+}
+
+export class StormGlassResponseError extends InternalError {
+  constructor(message: string) {
+    const internalMessage =
+      'Unexpected error returned by the StormGlass service';
+    super(`${internalMessage}: ${message}`);
+  }
+}
+
+const stormGlassResourceConfig: IConfig = config.get(
+  'App.resources.StormGlass'
+);
+
+export interface StormGlassForecastResponse {
+  hours: StormGlassPoint[];
+}
+
+export interface ForecastPoint {
+  time: string;
+  waveHeight: number;
+  waveDirection: number;
+  swellDirection: number;
+  swellHeight: number;
+  swellPeriod: number;
+  windDirection: number;
+  windSpeed: number;
+}
+
+export class StormGlass {
+  readonly stormGlassAPIParams =
+    'swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed';
+  readonly stormGlassAPISource = 'noaa';
+
+  constructor(protected request: AxiosStatic = axios) {}
+
+  public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
+    const token = stormGlassResourceConfig.get<string>('apiToken');
+
+    // ✅ SE O TOKEN FOR FAKE, USA DADOS MOCKADOS
+    if (!token || token === 'seu-token-real-aqui') {
+      console.log('⚠️  Usando dados mockados (token fake detectado)');
+      return this.getMockedData();
+    }
+
+    const endTime = Math.floor(Date.now() / 1000) + 48 * 3600;
+
+    try {
+      const response = await this.request.get<StormGlassForecastResponse>(
+        `${stormGlassResourceConfig.get<string>('apiUrl')}/weather/point?params=${
+          this.stormGlassAPIParams
+        }&source=${this.stormGlassAPISource}&end=${endTime}&lat=${lat}&lng=${lng}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      return this.normalizeResponse(response.data);
+    } catch (err: unknown) {
+      console.error(
+        '❌ Erro ao buscar dados da StormGlass, usando mock como fallback',
+        err
+      );
+      return this.getMockedData();
+    }
+  }
+
+  // ✅ DADOS MOCKADOS PARA DESENVOLVIMENTO
+  private getMockedData(): ForecastPoint[] {
+    const now = new Date();
+    const points: ForecastPoint[] = [];
+
+    for (let i = 0; i < 24; i++) {
+      const time = new Date(now.getTime() + i * 3600000); // +1 hora
+      points.push({
+        time: time.toISOString(),
+        waveHeight: 1.5 + Math.random() * 2, // 1.5m - 3.5m
+        waveDirection: 180 + Math.random() * 40, // 180° - 220°
+        swellDirection: 170 + Math.random() * 30, // 170° - 200°
+        swellHeight: 1.2 + Math.random() * 1.5, // 1.2m - 2.7m
+        swellPeriod: 8 + Math.random() * 6, // 8s - 14s
+        windDirection: 90 + Math.random() * 60, // 90° - 150°
+        windSpeed: 10 + Math.random() * 15, // 10 - 25 km/h
+      });
+    }
+
+    return points;
+  }
+
+  private normalizeResponse(
+    points: StormGlassForecastResponse
+  ): ForecastPoint[] {
+    return points.hours.filter(this.isValidPoint.bind(this)).map((point) => ({
+      swellDirection: point.swellDirection[this.stormGlassAPISource],
+      swellHeight: point.swellHeight[this.stormGlassAPISource],
+      swellPeriod: point.swellPeriod[this.stormGlassAPISource],
+      time: point.time,
+      waveDirection: point.waveDirection[this.stormGlassAPISource],
+      waveHeight: point.waveHeight[this.stormGlassAPISource],
+      windDirection: point.windDirection[this.stormGlassAPISource],
+      windSpeed: point.windSpeed[this.stormGlassAPISource],
+    }));
+  }
+
+  private isValidPoint(point: Partial<StormGlassPoint>): boolean {
+    return !!(
+      point.time &&
+      point.swellHeight?.[this.stormGlassAPISource] &&
+      point.swellPeriod?.[this.stormGlassAPISource] &&
+      point.waveDirection?.[this.stormGlassAPISource] &&
+      point.waveHeight?.[this.stormGlassAPISource] &&
+      point.windDirection?.[this.stormGlassAPISource] &&
+      point.windSpeed?.[this.stormGlassAPISource]
+    );
+  }
+}
+
+src/services/forecast.ts
+
+import _ from 'lodash';
+import { StormGlass, ForecastPoint } from '@src/clients/stormGlass';
+import { Beach } from '@src/models/beach';
+import { InternalError } from '@src/util/errors/internal-error';
+import { Rating } from './rating';
+import logger from '@src/logger';
+
+export interface TimeForecast {
+  time: string;
+  forecast: BeachForecast[];
+}
+
+export class ForecastProcessingInternalError extends InternalError {
+  constructor(message: string) {
+    super(`Unexpected error during the forecast processing: ${message}`);
+  }
+}
+
+export interface BeachForecast extends Omit<Beach, 'user'>, ForecastPoint {}
+
+export class Forecast {
+  constructor(
+    protected stormGlass = new StormGlass(),
+    protected RatingService: typeof Rating = Rating
+  ) {}
+
+  public async processForecastForBeaches(
+    beaches: Beach[]
+  ): Promise<TimeForecast[]> {
+    try {
+      const beachForecast = await this.calculateRating(beaches);
+      const timeForecast = this.mapForecastByTime(beachForecast);
+      return timeForecast.map((t) => ({
+        time: t.time,
+        // TODO Allow ordering to be dynamic
+        // Sorts the beaches by its ratings
+        forecast: _.orderBy(t.forecast, ['rating'], ['desc']),
+      }));
+    } catch (error) {
+      logger.error(error);
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      throw new ForecastProcessingInternalError(message);
+    }
+  }
+
+  private async calculateRating(beaches: Beach[]): Promise<BeachForecast[]> {
+    const pointsWithIncorrectSources: BeachForecast[] = [];
+    logger.info(`Preparing the forecast for ${beaches.length} beaches`);
+    for (const beach of beaches) {
+      const rating = new this.RatingService(beach);
+      const points = await this.stormGlass.fetchPoints(beach.lat, beach.lng);
+      const enrichedBeachData = this.enrichBeachData(points, beach, rating);
+      pointsWithIncorrectSources.push(...enrichedBeachData);
+    }
+    return pointsWithIncorrectSources;
+  }
+
+  private enrichBeachData(
+    points: ForecastPoint[],
+    beach: Beach,
+    rating: Rating
+  ): BeachForecast[] {
+    return points.map((point) => ({
+      lat: beach.lat,
+      lng: beach.lng,
+      name: beach.name,
+      position: beach.position,
+      rating: rating.getRateForPoint(point),
+      ...point,
+    }));
+  }
+
+  private mapForecastByTime(forecast: BeachForecast[]): TimeForecast[] {
+    const forecastByTime: TimeForecast[] = [];
+    for (const point of forecast) {
+      const timePoint = forecastByTime.find((f) => f.time === point.time);
+      if (timePoint) {
+        timePoint.forecast.push(point);
+      } else {
+        forecastByTime.push({
+          time: point.time,
+          forecast: [point],
+        });
+      }
+    }
+    return forecastByTime;
+  }
+}
+src/controllers/forecast.ts
+
+import { ClassMiddleware, Controller, Get } from '@overnightjs/core';
+import { Request, Response } from 'express';
+import { Forecast } from '@src/services/forecast';
+import { Beach } from '@src/models/beach';
+import { StormGlass } from '@src/clients/stormGlass';
+import { authMiddleware } from '@src/middlewares/auth';
+import logger from '@src/logger';
+import { BaseController } from '.';
+
+const stormGlass = new StormGlass();
+const forecast = new Forecast(stormGlass);
+
+@Controller('forecast')
+@ClassMiddleware(authMiddleware)
+export class ForecastController extends BaseController{
+  @Get('')
+  public async getForecastForLoggedUser(
+    req: Request,
+    res: Response
+  ): Promise<void> {
+    try {
+      const beaches = await Beach.find({user: req.decoded?.id});
+      const forecastData = await forecast.processForecastForBeaches(beaches as unknown as Beach[]);
+      res.status(200).send(forecastData);
+    } catch (error){
+      logger.error({ error }, 'Forecast error');
+      this.sendErrorResponse(res, {code: 500, message: 'Something went wrong'})
+      
+    }
+  }
+}
+
+test/functional/forecast.test.ts
+
+/* eslint-disable @typescript-eslint/triple-slash-reference */
+/// <reference path="../globals.d.ts" />
+
+import { Beach, GeoPosition } from '@src/models/beach';
+import stormGlassWeather3HoursFixture from '@test/fixtures/stormglass_weather_3_hours.json';
+import nock from 'nock';
+import apiForecastResponse1BeachFixture from '@test/fixtures/api.forecast_response_1_beach.json';
+import { User } from '@src/models/users';
+import AuthService from '@src/services/auth';
+
+describe('Beach forecast functional tests', () => {
+  const defaultUser = {
+    name: 'John Doe',
+    email: 'john2@mail.com',
+    password: '1234',
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let token: string;
+  beforeEach(async () => {
+    await Beach.deleteMany({});
+    await User.deleteMany({});
+    const user = await new User(defaultUser).save();
+    const defaultBeach = {
+      lat: -33.792726,
+      lng: 151.289824,
+      name: 'Manly',
+      position: GeoPosition.E,
+      user: user._id,
+    };
+    await new Beach(defaultBeach).save();
+
+    token = AuthService.generateToken(user.toJSON());
+  });
+
+  it('should return a forecast with just a few times', async () => {
+    nock('https://api.stormglass.io:443', {
+      encodedQueryParams: true,
+      reqheaders: {
+        Authorization: (): boolean => true,
+      },
+    })
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+      .get('/v2/weather/point')
+      .query(true)
+      .reply(200, stormGlassWeather3HoursFixture);
+
+    const { body, status } = await global.testRequest
+      .get('/forecast')
+      .set({ 'x-access-token': token });
+    expect(status).toBe(200);
+    expect(body).toEqual(apiForecastResponse1BeachFixture);
+  }, 10000);
+
+  it('should return 500 if something goes wrong during the processing', async () => {
+    nock('https://api.stormglass.io:443', {
+      encodedQueryParams: true,
+      reqheaders: {
+        Authorization: (): boolean => true,
+      },
+    })
+      .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+      .get('/v2/weather/point')
+      .query(true)
+      .replyWithError('Something went wrong');
+
+    const { status, body } = await global.testRequest
+      .get('/forecast')
+      .set({ 'x-access-token': token });
+
+    expect(status).toBe(500);
+    expect(body).toEqual({
+      code: 500,
+      error: 'Internal Server Error',
+      message: 'Something went wrong',
+    });
+  }, 10000);
+});
+
+// o super teste bate em um rota e compare a resposta
+// ISSO QUE EU ESPERO NO FINAL DA ROTA, QUERO QUE ELA ME DEVOVA O FORECAST
+
+// mude de toBe para toEquals
+
+
+
