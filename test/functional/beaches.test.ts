@@ -1,6 +1,6 @@
-import { Beach } from '@src/models/beach';
-import { User } from '@src/models/user';
 import AuthService from '@src/services/auth';
+import { Beach } from '@src/models/beach';
+import { UserMongoDBRepository } from '@src/repositories/userMongoDBRepository';
 
 describe('Beaches functional tests', () => {
   const defaultUser = {
@@ -9,13 +9,13 @@ describe('Beaches functional tests', () => {
     password: '1234',
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let token: string;
   beforeEach(async () => {
+    const userRepository = new UserMongoDBRepository();
     await Beach.deleteMany({});
-    await User.deleteMany({});
-    const user = await new User(defaultUser).save();
-    token = AuthService.generateToken(user.id);
+    await userRepository.deleteAll();
+    const user = await userRepository.create(defaultUser);
+    token = AuthService.generateToken(user.id.toString());
   });
 
   describe('When creating a new beach', () => {
@@ -31,13 +31,12 @@ describe('Beaches functional tests', () => {
         .post('/beaches')
         .set({ 'x-access-token': token })
         .send(newBeach);
-
       expect(response.status).toBe(201);
       //Object containing matches the keys and values, even if includes other keys such as id.
       expect(response.body).toEqual(expect.objectContaining(newBeach));
     });
 
-    it('should return validation error', async () => {
+    it('should return validation error when a field is invalid', async () => {
       const newBeach = {
         lat: 'invalid_string',
         lng: 151.289824,

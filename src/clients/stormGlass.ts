@@ -1,10 +1,10 @@
-import config, { IConfig } from 'config';
 import { InternalError } from '@src/util/errors/internal-error';
+import config, { IConfig } from 'config';
+// Another way to have similar behaviour to TS namespaces
 import * as HTTPUtil from '@src/util/request';
 import { TimeUtil } from '@src/util/time';
 import CacheUtil from '@src/util/cache';
 import logger from '@src/logger';
-
 
 export interface StormGlassPointSource {
   [key: string]: number;

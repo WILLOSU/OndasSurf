@@ -11,7 +11,7 @@ import {
 } from './repository';
 
 export abstract class DefaultMongoDBRepository<
-  T extends BaseModel
+  T extends BaseModel,
 > extends Repository<T> {
   constructor(private model: Model<T>) {
     super();
@@ -21,7 +21,7 @@ export abstract class DefaultMongoDBRepository<
     try {
       const model = new this.model(data);
       const createdData = await model.save();
-      return createdData.toJSON<WithId<T>>(); // encapsulando lógica - transformando no jason
+      return createdData.toJSON<WithId<T>>();
     } catch (error) {
       this.handleError(error);
     }
@@ -61,12 +61,12 @@ export abstract class DefaultMongoDBRepository<
       }
       throw new DatabaseUnknownClientError(error.message);
     }
-
-    const internalError = error instanceof Error
-      ? error
-      : new Error(String(error));
-
-    logger.warn({ error: internalError }, 'Database error');
+    if (error instanceof Error.CastError) {
+      throw new DatabaseValidationError(
+        `Invalid value for field ${error.path}: ${error.value}`
+      );
+    }
+    logger.warn({ error }, 'Database error');
     throw new DatabaseInternalError(
       'Something unexpected happened to the database'
     );

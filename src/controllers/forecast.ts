@@ -9,9 +9,9 @@ import { BeachForecast, Forecast } from '@src/services/forecast';
 import { authMiddleware } from '@src/middlewares/auth';
 import { BaseController } from '.';
 import logger from '@src/logger';
+import rateLimit from 'express-rate-limit';
 import ApiError from '@src/util/errors/api-error';
 import { BeachRepository } from '@src/repositories';
-import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 
 const forecast = new Forecast();
 
@@ -19,7 +19,7 @@ const rateLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,
   max: 10,
   keyGenerator(req: Request): string {
-    return ipKeyGenerator(req.ip ?? req.socket.remoteAddress ?? 'unknown');
+    return req.ip ?? '127.0.0.1';
   },
   handler(_, res: Response): void {
     res.status(429).send(
@@ -29,6 +29,7 @@ const rateLimiter = rateLimit({
       })
     );
   },
+  validate: false,  
 });
 
 @Controller('forecast')

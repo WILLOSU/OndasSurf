@@ -1,6 +1,8 @@
+// src/services/auth.ts
+
 import bcrypt from 'bcrypt';
 import config from 'config';
-import jwt, { SignOptions } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 export interface JwtToken {
   sub: string;
@@ -22,14 +24,12 @@ export default class AuthService {
   }
 
   public static generateToken(sub: string): string {
-    const secret = config.get<string>('App.auth.key');
-    const expiresIn = config.get<SignOptions['expiresIn']>('App.auth.tokenExpiresIn');
-
-    return jwt.sign({ sub }, secret, { expiresIn });
+    return jwt.sign({ sub }, config.get<string>('App.auth.key'), {
+      expiresIn: config.get('App.auth.tokenExpiresIn'),
+    } as jwt.SignOptions);
   }
 
   public static decodeToken(token: string): JwtToken {
-    const secret = config.get<string>('App.auth.key');
-    return jwt.verify(token, secret) as JwtToken;
+    return jwt.verify(token, config.get<string>('App.auth.key')) as JwtToken;
   }
 }

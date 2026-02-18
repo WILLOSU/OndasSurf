@@ -1,7 +1,8 @@
 import { Beach, GeoPosition } from '@src/models/beach';
 import nock from 'nock';
 import stormGlassWeather3HoursFixture from '../fixtures/stormglass_weather_3_hours.json';
-import apiForecastResponse1BeachFixture from '../fixtures/api.forecast_response_1_beach.json';
+import apiForecastResponse1BeachFixture from '../fixtures/api_forecast_response_1_beach.json';
+
 import AuthService from '@src/services/auth';
 import CacheUtil from '@src/util/cache';
 import { UserMongoDBRepository } from '@src/repositories/userMongoDBRepository';
@@ -26,7 +27,7 @@ describe('Beach forecast functional tests', () => {
       userId: user.id,
     };
     await new Beach(defaultBeach).save();
-    token = AuthService.generateToken(user.id);
+    token = AuthService.generateToken(user.id.toString());
     CacheUtil.clearAllCache();
   });
 
@@ -64,18 +65,12 @@ describe('Beach forecast functional tests', () => {
       },
     })
       .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
-      .get('/v2/weather/point')
-      .query({
-        lat: '-33.792726',
-        lng: '151.289824',
-        params: /(.*)/,
-        source: 'noaa',
-        end: /(.*)/,
-      })
+      .get('/v1/weather/point')
+      .query({ lat: '-33.792726', lng: '151.289824' })
       .replyWithError('Something went wrong');
 
     const { status } = await global.testRequest
-      .get('/forecast')
+      .get(`/forecast`)
       .set({ 'x-access-token': token });
 
     expect(status).toBe(500);

@@ -1,11 +1,16 @@
-import mongoose, { Document, Types } from 'mongoose';
-import AuthService from '../services/auth';
+import mongoose, { Document } from 'mongoose';
+import AuthService from '@src/services/auth';
+import logger from '@src/logger';
+import { BaseModel } from '.';
 
-export interface User {
-  _id?: Types.ObjectId;
+export interface User extends BaseModel {
   name: string;
   email: string;
   password: string;
+}
+
+export interface ExistingUser extends User {
+  id: string;
 }
 
 export enum CUSTOM_VALIDATION {
@@ -26,18 +31,15 @@ const schema = new mongoose.Schema(
   },
   {
     toJSON: {
-      transform(_, ret) {
-        const doc = ret as Omit<typeof ret, '_id' | '__v'> & {
-          id?: string;
-          _id?: Types.ObjectId;
-          __v?: number;
-        };
-        doc.id = doc._id?.toString();
-        delete doc._id;
-        delete doc.__v;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      transform(_: unknown, ret: Record<string, any>) {
+        ret.id = ret._id.toString();
+        delete ret._id;
+        delete ret.__v;
+        return ret;
       },
     },
-  },
+  }
 );
 
 schema.path('email').validate(
@@ -57,7 +59,7 @@ schema.pre<UserModel>('save', async function (): Promise<void> {
     const hashedPassword = await AuthService.hashPassword(this.password);
     this.password = hashedPassword;
   } catch (err) {
-    console.error(`Error hashing the password for the user ${this.name}`, err);
+    logger.error({ err }, `Error hashing the password for the user ${this.name}`);
   }
 });
 

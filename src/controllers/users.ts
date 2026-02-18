@@ -1,11 +1,9 @@
 import { Controller, Post, Get, Middleware } from '@overnightjs/core';
 import { Response, Request } from 'express';
-import mongoose from 'mongoose';
 import AuthService from '@src/services/auth';
 import { BaseController } from './index';
 import { authMiddleware } from '@src/middlewares/auth';
 import { UserRepository } from '@src/repositories';
-import ApiError from '@src/util/errors/api-error';
 
 @Controller('users')
 export class UsersController extends BaseController {
@@ -19,16 +17,7 @@ export class UsersController extends BaseController {
       const newUser = await this.userRepository.create(req.body);
       res.status(201).send(newUser);
     } catch (error) {
-      if (
-        error instanceof mongoose.Error.ValidationError ||
-        error instanceof Error
-      ) {
-        this.sendCreateUpdateErrorResponse(res, error);
-      } else {
-        res
-          .status(500)
-          .send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
-      }
+      this.sendCreateUpdateErrorResponse(res, error as Error);
     }
   }
 
@@ -50,7 +39,8 @@ export class UsersController extends BaseController {
         message: 'Password does not match!',
       });
     }
-    const token = AuthService.generateToken(user.id);
+    // Onde voce faz o login/authenticate
+const token = AuthService.generateToken(user.id.toString());
 
     return res.send({ ...user, ...{ token } });
   }
