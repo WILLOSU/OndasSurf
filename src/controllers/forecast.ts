@@ -1,20 +1,26 @@
-import { ClassMiddleware, Controller, Get, Middleware } from '@overnightjs/core';
+import {
+  Controller,
+  Get,
+  ClassMiddleware,
+  Middleware,
+} from '@overnightjs/core';
 import { Request, Response } from 'express';
-import { Forecast } from '@src/services/forecast';
-import { Beach } from '@src/models/beach';
-import { StormGlass } from '@src/clients/stormGlass';
+import { BeachForecast, Forecast } from '@src/services/forecast';
 import { authMiddleware } from '@src/middlewares/auth';
-import logger from '@src/logger';
 import { BaseController } from '.';
-import rateLimit from 'express-rate-limit';
+import logger from '@src/logger';
 import ApiError from '@src/util/errors/api-error';
+import { BeachRepository } from '@src/repositories';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 
-const stormGlass = new StormGlass();
-const forecast = new Forecast(stormGlass);
+const forecast = new Forecast();
 
 const rateLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute in milliseconds
+  windowMs: 1 * 60 * 1000,
   max: 10,
+  keyGenerator(req: Request): string {
+    return ipKeyGenerator(req.ip ?? req.socket.remoteAddress ?? 'unknown');
+  },
   handler(_, res: Response): void {
     res.status(429).send(
       ApiError.format({
@@ -28,20 +34,45 @@ const rateLimiter = rateLimit({
 @Controller('forecast')
 @ClassMiddleware(authMiddleware)
 export class ForecastController extends BaseController {
+  constructor(private beachRepository: BeachRepository) {
+    super();
+  }
+
   @Get('')
   @Middleware(rateLimiter)
-  public async getForecastForLoggedUser(
+  public async getForecastForgeLoggedUser(
     req: Request,
     res: Response
   ): Promise<void> {
     try {
-      const beaches = await Beach.find({ user: req.decoded?.id });
+      const {
+        orderBy,
+        orderField,
+      }: {
+        orderBy?: 'asc' | 'desc';
+        orderField?: keyof BeachForecast;
+      } = req.query;
+
+      if (!req.context.userId) {
+        this.sendErrorResponse(res, {
+          code: 500,
+          message: 'Something went wrong',
+        });
+        logger.error('Missing userId');
+        return;
+      }
+
+      const beaches = await this.beachRepository.findAllBeachesForUser(
+        req.context.userId
+      );
       const forecastData = await forecast.processForecastForBeaches(
-        beaches as unknown as Beach[]
+        beaches,
+        orderBy,
+        orderField
       );
       res.status(200).send(forecastData);
     } catch (error) {
-      logger.error({ error }, 'Forecast error');
+      logger.error(error);
       this.sendErrorResponse(res, {
         code: 500,
         message: 'Something went wrong',

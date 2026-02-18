@@ -1,8 +1,8 @@
-import mongoose, { Document } from 'mongoose';
-import AuthService from '../services/auth'; 
+import mongoose, { Document, Types } from 'mongoose';
+import AuthService from '../services/auth';
 
 export interface User {
-  _id?: string;
+  _id?: Types.ObjectId;
   name: string;
   email: string;
   password: string;
@@ -26,14 +26,18 @@ const schema = new mongoose.Schema(
   },
   {
     toJSON: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      transform: (_, ret: { [key: string]: unknown }): void => {
-        ret.id = ret._id;
-        delete ret._id;
-        delete ret.__v;
+      transform(_, ret) {
+        const doc = ret as Omit<typeof ret, '_id' | '__v'> & {
+          id?: string;
+          _id?: Types.ObjectId;
+          __v?: number;
+        };
+        doc.id = doc._id?.toString();
+        delete doc._id;
+        delete doc.__v;
       },
     },
-  }
+  },
 );
 
 schema.path('email').validate(
@@ -44,7 +48,6 @@ schema.path('email').validate(
   'already exists in the database.',
   CUSTOM_VALIDATION.DUPLICATED
 );
-
 
 schema.pre<UserModel>('save', async function (): Promise<void> {
   if (!this.password || !this.isModified('password')) {

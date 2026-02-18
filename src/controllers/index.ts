@@ -1,23 +1,21 @@
 import { Response } from 'express';
 import mongoose from 'mongoose';
-import { CUSTOM_VALIDATION } from '../models/users';
+import { CUSTOM_VALIDATION } from '../models/user';
 import ApiError, { APIError } from '@src/util/errors/api-error';
 
 export abstract class BaseController {
-  protected sendCreateUpdateErrorReponse(
+  protected sendCreateUpdateErrorResponse(
     res: Response,
     error: mongoose.Error.ValidationError | Error
   ): void {
     if (error instanceof mongoose.Error.ValidationError) {
       const clientError = this.handleClientErrors(error);
-      res
-        .status(clientError.code)
-        .send(
-          ApiError.format({
-            code: clientError.code,
-            message: clientError.error,
-          })
-        );
+      res.status(clientError.code).send(
+        ApiError.format({
+          code: clientError.code,
+          message: clientError.error,
+        })
+      );
     } else {
       res
         .status(500)

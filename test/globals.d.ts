@@ -1,16 +1,11 @@
-// test/globals.d.ts
+/**
+ * @Update 2022 - This has logic has been update to support newer Node.js versions
+ * that don't have NodeJS as a global type
+ */
+declare global {
+  //eslint-disable-next-line no-var
+  var testRequest: import('supertest').SuperTest<import('supertest').Test>;
+}
 
-/* eslint-disable no-var */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-declare var testRequest: import('supertest').SuperTest<
-  import('supertest').Test
->;
-/*
-poriamos importar o tipo do testRequest, o prolema se usarmos ele aqui neste arquivo o typscript
-vai tratar esse arquivo d.ts como modo local e não global.
+export {};
 
-precisamos declarar in line
-
-adiconando assim tipos para os tipos globais
-
-*/

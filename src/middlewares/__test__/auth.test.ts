@@ -1,16 +1,15 @@
 import AuthService from '@src/services/auth';
 import { authMiddleware } from '../auth';
-import { Response } from 'express';
 
-describe('Auth Middleware', () => {
+describe('AuthMiddleware', () => {
   it('should verify a JWT token and call the next middleware', () => {
-    const jwtToken = AuthService.generateToken({ data: 'fake' });
+    const jwtToken = AuthService.generateToken('fake-user-id');
     const reqFake = {
       headers: {
         'x-access-token': jwtToken,
       },
     };
-    const resFake = {} as Response;
+    const resFake = {};
     const nextFake = jest.fn();
     authMiddleware(reqFake, resFake, nextFake);
     expect(nextFake).toHaveBeenCalled();
@@ -19,7 +18,7 @@ describe('Auth Middleware', () => {
   it('should return UNAUTHORIZED if there is a problem on the token verification', () => {
     const reqFake = {
       headers: {
-        'x-access-token': 'invalid_token',
+        'x-access-token': 'invalid token',
       },
     };
     const sendMock = jest.fn();
@@ -37,7 +36,7 @@ describe('Auth Middleware', () => {
     });
   });
 
-  it('Sholud return ANAUTHORIZED middleware if theres no token', () => {
+  it('should return ANAUTHORIZED middleware if theres no token', () => {
     const reqFake = {
       headers: {},
     };

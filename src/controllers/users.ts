@@ -1,56 +1,78 @@
-import { Controller, Get, Middleware, Post } from '@overnightjs/core';
+import { Controller, Post, Get, Middleware } from '@overnightjs/core';
 import { Response, Request } from 'express';
-import { User } from '../models/users';
-import { BaseController } from './index';
+import mongoose from 'mongoose';
 import AuthService from '@src/services/auth';
+import { BaseController } from './index';
 import { authMiddleware } from '@src/middlewares/auth';
+import { UserRepository } from '@src/repositories';
+import ApiError from '@src/util/errors/api-error';
 
 @Controller('users')
 export class UsersController extends BaseController {
+  constructor(private userRepository: UserRepository) {
+    super();
+  }
+
   @Post('')
   public async create(req: Request, res: Response): Promise<void> {
     try {
-      const user = new User(req.body);
-      const newUser = await user.save();
+      const newUser = await this.userRepository.create(req.body);
       res.status(201).send(newUser);
     } catch (error) {
-      this.sendCreateUpdateErrorReponse(res, error as Error);
+      if (
+        error instanceof mongoose.Error.ValidationError ||
+        error instanceof Error
+      ) {
+        this.sendCreateUpdateErrorResponse(res, error);
+      } else {
+        res
+          .status(500)
+          .send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
+      }
     }
   }
 
   @Post('authenticate')
-  public async authenticate(
-    req: Request,
-    res: Response
-  ): Promise<Response | undefined> {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+  public async authenticate(req: Request, res: Response): Promise<Response> {
+    const user = await this.userRepository.findOneByEmail(req.body.email);
     if (!user) {
       return this.sendErrorResponse(res, {
         code: 401,
-        message: 'User not found',
+        message: 'User not found!',
+        description: 'Try verifying your email address.',
       });
     }
-    if (!(await AuthService.comparePasswords(password, user.password))) {
+    if (
+      !(await AuthService.comparePasswords(req.body.password, user.password))
+    ) {
       return this.sendErrorResponse(res, {
         code: 401,
-        message: 'Password does not match',
+        message: 'Password does not match!',
       });
     }
+    const token = AuthService.generateToken(user.id);
 
+    return res.send({ ...user, ...{ token } });
   }
 
   @Get('me')
   @Middleware(authMiddleware)
   public async me(req: Request, res: Response): Promise<Response> {
-    const email = req.decoded ? req.decoded.email : undefined;
-    const user = await User.findOne({ email });
+    const userId = req.context?.userId;
+    if (!userId) {
+      return this.sendErrorResponse(res, {
+        code: 404,
+        message: 'user id not provided',
+      });
+    }
+    const user = await this.userRepository.findOneById(userId);
     if (!user) {
       return this.sendErrorResponse(res, {
         code: 404,
-        message: 'User not found',
+        message: 'User not found!',
       });
     }
-    return res.send(user);
+
+    return res.send({ user });
   }
 }

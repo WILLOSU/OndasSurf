@@ -1,15 +1,15 @@
-import { Beach,  GeoPosition } from '@src/models/beach';
-import { Rating } from '../rating';
+import { Rating } from '@src/services/rating';
+import { ExistingBeach, GeoPosition } from '@src/models/beach';
 
 describe('Rating Service', () => {
-  const defaultBeach: Beach = {
+  const defaultBeach: ExistingBeach = {
+    id: 'fake-id1',
     lat: -33.792726,
     lng: 151.289824,
     name: 'Manly',
     position: GeoPosition.E,
-    user: 'some-user',
+    userId: 'some-user',
   };
-
   const defaultRating = new Rating(defaultBeach);
   describe('Calculate rating for a given point', () => {
     const defaultPoint = {
@@ -47,7 +47,6 @@ describe('Rating Service', () => {
           windDirection: 250,
         },
       };
-
       const rating = defaultRating.getRateForPoint(point);
       expect(rating).toBe(3);
     });
@@ -61,7 +60,6 @@ describe('Rating Service', () => {
           windDirection: 250,
         },
       };
-
       const rating = defaultRating.getRateForPoint(point);
       expect(rating).toBe(4);
     });
@@ -75,10 +73,9 @@ describe('Rating Service', () => {
           windDirection: 250,
         },
       };
-
       const rating = defaultRating.getRateForPoint(point);
       expect(rating).toBe(4);
-    }); // Fechamento correto: parênteses e depois chave.
+    });
 
     it('should get a rating of 5 classic day!', () => {
       const point = {
@@ -89,27 +86,28 @@ describe('Rating Service', () => {
           windDirection: 250,
         },
       };
-
       const rating = defaultRating.getRateForPoint(point);
       expect(rating).toBe(5);
     });
-
     it('should get a rating of 4 a good condition but with crossshore winds', () => {
       const point = {
         ...defaultPoint,
         ...{
           swellHeight: 2.5,
-          windDirection: 130, // Vento lateral (crossshore)
+          swellPeriod: 16,
+          windDirection: 130,
         },
       };
-
       const rating = defaultRating.getRateForPoint(point);
-      expect(rating).toBe(3);
+      expect(rating).toBe(4);
     });
   });
 
+  /**
+   * Wave and wind only tests
+   */
   describe('Get rating based on wind and wave positions', () => {
-    it('shoud get rating 1 for a beach with onshore winds', () => {
+    it('should get rating 1 for a beach with onshore winds', () => {
       const rating = defaultRating.getRatingBasedOnWindAndWavePositions(
         GeoPosition.E,
         GeoPosition.E
@@ -118,7 +116,6 @@ describe('Rating Service', () => {
     });
 
     it('should get rating 3 for a beach with cross winds', () => {
-      // crpss winds vento lateral
       const rating = defaultRating.getRatingBasedOnWindAndWavePositions(
         GeoPosition.E,
         GeoPosition.S
@@ -168,7 +165,6 @@ describe('Rating Service', () => {
       const rating = defaultRating.getRatingForSwellSize(0.2);
       expect(rating).toBe(1);
     });
-
     it('should get rating 2 for an ankle to knee swell', () => {
       const rating = defaultRating.getRatingForSwellSize(0.6);
       expect(rating).toBe(2);

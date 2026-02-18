@@ -1,4 +1,4 @@
-import { User } from '../../src/models/users';
+import { User } from '@src/models/user';
 import AuthService from '@src/services/auth';
 
 describe('Users functional tests', () => {
@@ -108,7 +108,7 @@ describe('Users functional tests', () => {
         password: '1234',
       };
       const user = await new User(newUser).save();
-      const token = AuthService.generateToken(user.toJSON());
+      const token = AuthService.generateToken(user.id);
       const { body, status } = await global.testRequest
         .get('/users/me')
         .set({ 'x-acess-token': token });
@@ -125,7 +125,7 @@ describe('Users functional tests', () => {
       };
       // create a new user but dont't save it
       const user = new User(newUser);
-      const token = AuthService.generateToken(user.toJSON());
+      const token = AuthService.generateToken(user.id);
       const { body, status } = await global.testRequest
         .get('/users/me')
         .set({ 'x-acess-token': token });

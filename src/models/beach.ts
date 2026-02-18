@@ -1,4 +1,5 @@
-import mongoose, { Document, Model, Schema } from 'mongoose';
+import mongoose, { Schema, Types } from 'mongoose';
+import { BaseModel } from '.';
 
 export enum GeoPosition {
   S = 'S',
@@ -7,38 +8,40 @@ export enum GeoPosition {
   N = 'N',
 }
 
-export interface Beach {
-  _id?: string;
+export interface Beach extends BaseModel {
   name: string;
   position: GeoPosition;
   lat: number;
   lng: number;
-  user: string;
+  userId: string;
 }
 
-interface BeachModel extends Omit<Beach, '_id'>, Document {}
+export interface ExistingBeach extends Beach {
+  id: string;
+}
 
-const schema = new mongoose.Schema<BeachModel>(
+const schema = new mongoose.Schema(
   {
     lat: { type: Number, required: true },
     lng: { type: Number, required: true },
     name: { type: String, required: true },
     position: { type: String, required: true },
-    user: { 
-      type: Schema.Types.ObjectId, 
-      ref: 'User', 
-      required: true 
-    } as unknown as string, 
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   },
   {
     toJSON: {
-      transform: (_, ret: Record<string, unknown>): void => {
-        ret.id = ret._id;
-        delete ret._id;
-        delete ret.__v;
+      transform(_, ret) {
+        const doc = ret as Omit<typeof ret, '_id' | '__v'> & {
+          id?: string;
+          _id?: Types.ObjectId;
+          __v?: number;
+        };
+        doc.id = doc._id?.toString();
+        delete doc._id;
+        delete doc.__v;
       },
     },
   }
 );
 
-export const Beach: Model<BeachModel> = mongoose.model<BeachModel>('Beach', schema);
+export const Beach = mongoose.model<Beach>('Beach', schema);

@@ -3,7 +3,7 @@ import httpStatusCodes from 'http-status-codes';
 export interface APIError {
   message: string;
   code: number;
-  codeAstring?: string;
+  codeAsString?: string; //allow to override the default error code as string
   description?: string;
   documentation?: string;
 }
@@ -18,13 +18,12 @@ export default class ApiError {
       ...{
         message: error.message,
         code: error.code,
-        error: error.codeAstring
-          ? error.codeAstring
+        error: error.codeAsString
+          ? error.codeAsString
           : httpStatusCodes.getStatusText(error.code),
       },
       ...(error.documentation && { documentation: error.documentation }),
-      ...(error.description && { description: error.description}),
-      
+      ...(error.description && { description: error.description }),
     };
   }
 }

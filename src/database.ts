@@ -16,9 +16,9 @@ export const connect = async (): Promise<Mongoose> => {
     mongoUrl = process.env.MONGODB_URL || mongoUrl;
   }
 
-  logger.info('Tentando conectar ao MongoDB...');
-  logger.info({ url: mongoUrl.substring(0, 20) }, 'URL (primeiros 20 chars)');
-  logger.info({ nodeEnv: process.env.NODE_ENV }, 'NODE_ENV');
+
+ 
+  
 
   return await mongoose.connect(mongoUrl);
 };

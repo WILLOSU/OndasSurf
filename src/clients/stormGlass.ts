@@ -1,41 +1,25 @@
-import axios, { AxiosStatic } from 'axios';
-import { InternalError } from '@src/util/errors/internal-error';
 import config, { IConfig } from 'config';
+import { InternalError } from '@src/util/errors/internal-error';
+import * as HTTPUtil from '@src/util/request';
+import { TimeUtil } from '@src/util/time';
+import CacheUtil from '@src/util/cache';
+import logger from '@src/logger';
+
 
 export interface StormGlassPointSource {
   [key: string]: number;
 }
 
 export interface StormGlassPoint {
-  readonly time: string;
+  time: string;
+  readonly waveHeight: StormGlassPointSource;
   readonly waveDirection: StormGlassPointSource;
   readonly swellDirection: StormGlassPointSource;
-  readonly swellPeriod: StormGlassPointSource;
   readonly swellHeight: StormGlassPointSource;
-  readonly waveHeight: StormGlassPointSource;
+  readonly swellPeriod: StormGlassPointSource;
   readonly windDirection: StormGlassPointSource;
   readonly windSpeed: StormGlassPointSource;
 }
-
-export class ClientRequestError extends InternalError {
-  constructor(message: string) {
-    const internalMessage =
-      'Unexpected error when tyring to comunicate to StormGlass';
-    super(`${internalMessage}: ${message}`);
-  }
-}
-
-export class StormGlassResponseError extends InternalError {
-  constructor(message: string) {
-    const internalMessage =
-      'Unexpected error returned by the StormGlass service';
-    super(`${internalMessage}: ${message}`);
-  }
-}
-
-const stormGlassResourceConfig: IConfig = config.get(
-  'App.resources.StormGlass'
-);
 
 export interface StormGlassForecastResponse {
   hours: StormGlassPoint[];
@@ -52,63 +36,128 @@ export interface ForecastPoint {
   windSpeed: number;
 }
 
+/**
+ * This error type is used when a request reaches out to the StormGlass API but returns an error
+ */
+export class StormGlassUnexpectedResponseError extends InternalError {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
+/**
+ * This error type is used when something breaks before the request reaches out to the StormGlass API
+ * eg: Network error, or request validation error
+ */
+export class ClientRequestError extends InternalError {
+  constructor(message: string) {
+    const internalMessage =
+      'Unexpected error when trying to communicate to StormGlass';
+    super(`${internalMessage}: ${message}`);
+  }
+}
+
+export class StormGlassResponseError extends InternalError {
+  constructor(message: string) {
+    const internalMessage =
+      'Unexpected error returned by the StormGlass service';
+    super(`${internalMessage}: ${message}`);
+  }
+}
+
+/**
+ * We could have proper type for the configuration
+ */
+const stormglassResourceConfig: IConfig = config.get(
+  'App.resources.StormGlass'
+);
+
 export class StormGlass {
   readonly stormGlassAPIParams =
     'swellDirection,swellHeight,swellPeriod,waveDirection,waveHeight,windDirection,windSpeed';
   readonly stormGlassAPISource = 'noaa';
 
-  constructor(protected request: AxiosStatic = axios) {}
+  constructor(
+    protected request = new HTTPUtil.Request(),
+    protected cacheUtil = CacheUtil
+  ) {}
 
   public async fetchPoints(lat: number, lng: number): Promise<ForecastPoint[]> {
-    const token = stormGlassResourceConfig.get<string>('apiToken');
+    const cachedForecastPoints = this.getForecastPointsFromCache(
+      this.getCacheKey(lat, lng)
+    );
 
-    // ✅ SE O TOKEN FOR FAKE, USA DADOS MOCKADOS
-    if (!token || token === 'seu-token-real-aqui') {
-      console.log('⚠️  Usando dados mockados (token fake detectado)');
-      return this.getMockedData();
+    if (!cachedForecastPoints) {
+      const forecastPoints = await this.getForecastPointsFromApi(lat, lng);
+      this.setForecastPointsInCache(this.getCacheKey(lat, lng), forecastPoints);
+      return forecastPoints;
     }
 
-    const endTime = Math.floor(Date.now() / 1000) + 48 * 3600;
+    return cachedForecastPoints;
+  }
 
+  protected async getForecastPointsFromApi(
+    lat: number,
+    lng: number
+  ): Promise<ForecastPoint[]> {
+    const endTimestamp = TimeUtil.getUnixTimeForAFutureDay(1);
     try {
       const response = await this.request.get<StormGlassForecastResponse>(
-        `${stormGlassResourceConfig.get<string>('apiUrl')}/weather/point?params=${
+        `${stormglassResourceConfig.get(
+          'apiUrl'
+        )}/weather/point?lat=${lat}&lng=${lng}&params=${
           this.stormGlassAPIParams
-        }&source=${this.stormGlassAPISource}&end=${endTime}&lat=${lat}&lng=${lng}`,
+        }&source=${this.stormGlassAPISource}&end=${endTimestamp}`,
         {
           headers: {
-            Authorization: token,
+            Authorization: stormglassResourceConfig.get('apiToken'),
           },
         }
       );
-
       return this.normalizeResponse(response.data);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      throw new ClientRequestError(message); // ← LANÇA o erro ao invés de engolir
+    } catch (err) {
+      //@Updated 2022 to support Error as unknown
+      //https://devblogs.microsoft.com/typescript/announcing-typescript-4-4/#use-unknown-catch-variables
+      if (err instanceof Error && HTTPUtil.Request.isRequestError(err)) {
+        const error = HTTPUtil.Request.extractErrorData(err);
+        throw new StormGlassResponseError(
+          `Error: ${JSON.stringify(error.data)} Code: ${error.status}`
+        );
+      }
+      /**
+       * All the other errors will fallback to a generic client error
+       */
+      throw new ClientRequestError(JSON.stringify(err));
     }
   }
 
-  // ✅ DADOS MOCKADOS PARA DESENVOLVIMENTO
-  private getMockedData(): ForecastPoint[] {
-    const now = new Date();
-    const points: ForecastPoint[] = [];
+  protected getForecastPointsFromCache(
+    key: string
+  ): ForecastPoint[] | undefined {
+    const forecastPointsFromCache = this.cacheUtil.get<ForecastPoint[]>(key);
 
-    for (let i = 0; i < 24; i++) {
-      const time = new Date(now.getTime() + i * 3600000); // +1 hora
-      points.push({
-        time: time.toISOString(),
-        waveHeight: 1.5 + Math.random() * 2, // 1.5m - 3.5m
-        waveDirection: 180 + Math.random() * 40, // 180° - 220°
-        swellDirection: 170 + Math.random() * 30, // 170° - 200°
-        swellHeight: 1.2 + Math.random() * 1.5, // 1.2m - 2.7m
-        swellPeriod: 8 + Math.random() * 6, // 8s - 14s
-        windDirection: 90 + Math.random() * 60, // 90° - 150°
-        windSpeed: 10 + Math.random() * 15, // 10 - 25 km/h
-      });
+    if (!forecastPointsFromCache) {
+      return;
     }
 
-    return points;
+    logger.info(`Using cache to return forecast points for key: ${key}`);
+    return forecastPointsFromCache;
+  }
+
+  private getCacheKey(lat: number, lng: number): string {
+    return `forecast_points_${lat}_${lng}`;
+  }
+
+  private setForecastPointsInCache(
+    key: string,
+    forecastPoints: ForecastPoint[]
+  ): boolean {
+    logger.info(`Updating cache to return forecast points for key: ${key}`);
+    return this.cacheUtil.set(
+      key,
+      forecastPoints,
+      stormglassResourceConfig.get('cacheTtl')
+    );
   }
 
   private normalizeResponse(
@@ -129,6 +178,7 @@ export class StormGlass {
   private isValidPoint(point: Partial<StormGlassPoint>): boolean {
     return !!(
       point.time &&
+      point.swellDirection?.[this.stormGlassAPISource] &&
       point.swellHeight?.[this.stormGlassAPISource] &&
       point.swellPeriod?.[this.stormGlassAPISource] &&
       point.waveDirection?.[this.stormGlassAPISource] &&
