@@ -40,7 +40,6 @@
     "@types/express-rate-limit": "^6.0.2",
     "@types/http-status-codes": "^1.2.0",
     "@types/jest": "^30.0.0",
-    "@types/leaflet": "^1.9.21",
     "@types/lodash": "^4.17.23",
     "@types/module-alias": "^2.0.4",
     "@types/moment": "^2.13.0",

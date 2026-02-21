@@ -1,7 +1,7 @@
 import logger from '@src/logger';
 import { BaseModel } from '@src/models';
 import { CUSTOM_VALIDATION } from '@src/models/user';
-import { Error, Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { FilterOptions, WithId } from '.';
 import {
   DatabaseConflictError,
@@ -10,6 +10,7 @@ import {
   DatabaseValidationError,
   Repository,
 } from './repository';
+
 export abstract class DefaultMongoDBRepository<
   T extends BaseModel,
 > extends Repository<T> {
@@ -17,7 +18,7 @@ export abstract class DefaultMongoDBRepository<
     super();
   }
 
- async create(data: T) {
+  async create(data: T): Promise<WithId<T>> {
     try {
       const model = new this.model(data);
       const createdData = await model.save();
@@ -27,7 +28,7 @@ export abstract class DefaultMongoDBRepository<
     }
   }
 
-  async findOne(options: FilterOptions) {
+  async findOne(options: FilterOptions): Promise<WithId<T> | undefined> {
     try {
       const data = await this.model.findOne(options);
       return data?.toJSON<WithId<T>>();
@@ -36,7 +37,7 @@ export abstract class DefaultMongoDBRepository<
     }
   }
 
-  async find(filter: FilterOptions) {
+  async find(filter: FilterOptions): Promise<WithId<T>[]> {
     try {
       const data = await this.model.find(filter);
       return data.map((d) => d.toJSON<WithId<T>>());
@@ -45,12 +46,12 @@ export abstract class DefaultMongoDBRepository<
     }
   }
 
-  async deleteAll() {
+  async deleteAll(): Promise<void> {
     await this.model.deleteMany({});
   }
 
   protected handleError(error: unknown): never {
-    if (error instanceof Error.ValidationError) {
+    if (error instanceof mongoose.Error.ValidationError) {
       const duplicatedKindErrors = Object.values(error.errors).filter(
         (err) =>
           err.name === 'ValidatorError' &&
@@ -59,12 +60,15 @@ export abstract class DefaultMongoDBRepository<
       if (duplicatedKindErrors.length) {
         throw new DatabaseConflictError(error.message);
       }
-      throw new DatabaseUnknownClientError(error.message);
+      throw new DatabaseValidationError(error.message);
     }
-    if (error instanceof Error.CastError) {
+    if (error instanceof mongoose.Error.CastError) {
       throw new DatabaseValidationError(
         `Invalid value for field ${error.path}: ${error.value}`
       );
+    }
+    if (error instanceof DatabaseUnknownClientError) {
+      throw error;
     }
     logger.warn({ error }, 'Database error');
     throw new DatabaseInternalError(

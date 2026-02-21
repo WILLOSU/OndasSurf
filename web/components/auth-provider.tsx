@@ -44,28 +44,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const data = await authLogin(email, password);
+    await authLogin(email, password);
     const u = await getUser();
-    if (u) {
-      setUser(u);
-    } else {
-      setUser({
-        id: data.id || "",
-        name: data.name || "",
-        email: data.email || email,
-      });
-    }
+    setUser(u);
   }, []);
 
   const register = useCallback(
     async (name: string, email: string, password: string) => {
       await authRegister(name, email, password);
       const u = await getUser();
-      if (u) {
-        setUser(u);
-      } else {
-        setUser({ id: "", name, email });
-      }
+      setUser(u);
     },
     []
   );

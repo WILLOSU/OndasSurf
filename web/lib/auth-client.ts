@@ -30,14 +30,20 @@ export function removeToken(): void {
 }
 
 export async function login(email: string, password: string): Promise<AuthResponse> {
-  const data = await apiClient<AuthResponse>("/users/authenticate", {
+  const data = await apiClient<{ user: User; token: string }>("/users/authenticate", {
     method: "POST",
     body: { email, password },
   });
   if (data.token) {
     setToken(data.token);
   }
-  return data;
+  return {
+    token: data.token,
+    user: data.user,
+    name: data.user?.name,
+    email: data.user?.email,
+    id: data.user?.id,
+  };
 }
 
 export async function register(
@@ -56,8 +62,8 @@ export async function getUser(): Promise<User | null> {
   const token = getToken();
   if (!token) return null;
   try {
-    const data = await apiClient<User>("/users/me", { token });
-    return data;
+    const data = await apiClient<{ user: User }>("/users/me", { token });
+    return data.user ?? null;
   } catch {
     removeToken();
     return null;

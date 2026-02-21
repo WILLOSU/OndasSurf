@@ -124,12 +124,12 @@ export function BeachForm({ onBeachCreated }: BeachFormProps) {
               <SelectTrigger id="position">
                 <SelectValue placeholder="Select orientation" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="N">North</SelectItem>
-                <SelectItem value="S">South</SelectItem>
-                <SelectItem value="E">East</SelectItem>
-                <SelectItem value="W">West</SelectItem>
-              </SelectContent>
+                <SelectContent className="z-9999">
+                  <SelectItem value="N">North</SelectItem>
+                  <SelectItem value="S">South</SelectItem>
+                  <SelectItem value="E">East</SelectItem>
+                  <SelectItem value="W">West</SelectItem>
+                </SelectContent>
             </Select>
           </div>
           <DialogFooter>

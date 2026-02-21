@@ -1,6 +1,7 @@
+import mongoose from 'mongoose';
 import { DefaultMongoDBRepository } from './defaultMongoDBRepository';
 import { User } from '@src/models/user';
-import { UserRepository } from '.';
+import { UserRepository, WithId } from '.';
 
 export class UserMongoDBRepository
   extends DefaultMongoDBRepository<User>
@@ -10,11 +11,14 @@ export class UserMongoDBRepository
     super(userModel);
   }
 
-  async findOneById(id: string) {
+  async findOneById(id: string): Promise<WithId<User> | undefined> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return undefined;
+    }
     return this.findOne({ _id: id });
   }
 
-  async findOneByEmail(email: string) {
-    return await this.findOne({ email });
+  async findOneByEmail(email: string): Promise<WithId<User> | undefined> {
+    return this.findOne({ email });
   }
 }

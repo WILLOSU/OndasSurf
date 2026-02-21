@@ -89,8 +89,8 @@ export default function DashboardPage() {
   } = useSWR<ForecastByTime[]>("forecast", getForecast, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
-    refreshInterval: 0, // Desabilita refresh automático
-    dedupingInterval: 60000, // Cache por 1 minuto
+    refreshInterval: 0,
+    dedupingInterval: 60000,
   });
 
   const times = forecastData?.map((f) => f.time) ?? [];
@@ -101,7 +101,6 @@ export default function DashboardPage() {
   const [sortBy, setSortBy] = useState<string>("rating");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Função de refresh manual
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await mutate();
@@ -112,42 +111,42 @@ export default function DashboardPage() {
   const activeForecast =
     forecastData?.find((f) => f.time === activeTime)?.forecast ?? [];
 
-  // Extrair praias únicas
   const beaches = useMemo(() => {
+    if (!forecastData) return [];
+
+    const allForecasts = forecastData.flatMap((f) => f.forecast);
+    const activeRatings = new Map(activeForecast.map((f) => [f.name, f.rating]));
+
     return Array.from(
       new Map(
-        activeForecast.map((f) => [
+        allForecasts.map((f) => [
           f.name,
           {
             name: f.name,
             lat: f.lat,
             lng: f.lng,
             position: f.position,
-            rating: f.rating,
+            rating: activeRatings.get(f.name) ?? f.rating,
           },
         ])
       ).values()
     );
-  }, [activeForecast]);
+  }, [forecastData, activeForecast]);
 
-  // Filtrar e ordenar previsões
   const filteredForecasts = useMemo(() => {
     let filtered = [...activeForecast];
 
-    // Filtro de busca
     if (searchQuery) {
       filtered = filtered.filter((f) =>
         f.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    // Filtro de rating
     if (ratingFilter !== "all") {
       const minRating = parseInt(ratingFilter);
       filtered = filtered.filter((f) => f.rating >= minRating);
     }
 
-    // Ordenação
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "rating":
@@ -166,7 +165,21 @@ export default function DashboardPage() {
     return filtered;
   }, [activeForecast, searchQuery, ratingFilter, sortBy]);
 
-  // Estatísticas
+  const filteredBeaches = useMemo(() => {
+    return beaches.filter((beach) => {
+      const matchesSearch = searchQuery
+        ? beach.name.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+
+      const matchesRating =
+        ratingFilter !== "all"
+          ? beach.rating >= parseInt(ratingFilter)
+          : true;
+
+      return matchesSearch && matchesRating;
+    });
+  }, [beaches, searchQuery, ratingFilter]);
+
   const totalBeaches = beaches.length;
   const bestRating = activeForecast.length
     ? Math.max(...activeForecast.map((f) => f.rating))
@@ -184,7 +197,6 @@ export default function DashboardPage() {
       )
     : 0;
 
-  // Dados para gráficos
   const chartData = useMemo(() => {
     if (!forecastData || !selectedBeach) return [];
 
@@ -206,7 +218,6 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Stats */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard icon={MapPin} label="Praias" value={String(totalBeaches)} />
         <StatCard
@@ -218,7 +229,6 @@ export default function DashboardPage() {
         <StatCard icon={Wind} label="Vento Médio" value={`${avgWind} km/h`} />
       </div>
 
-      {/* Controls */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <ForecastTimeSelector
@@ -241,7 +251,6 @@ export default function DashboardPage() {
         <BeachForm onBeachCreated={() => mutate()} />
       </div>
 
-      {/* Filtros */}
       <Card className="border-border/60">
         <CardContent className="flex flex-wrap items-center gap-4 p-4">
           <div className="flex items-center gap-2">
@@ -299,10 +308,9 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
 
-      {/* Map + Charts or Table */}
       <div className="grid gap-6 lg:grid-cols-2">
         <BeachMap
-          beaches={beaches}
+          beaches={filteredBeaches}
           selectedBeach={selectedBeach}
           onBeachSelect={(name) => {
             setSelectedBeach(name);
