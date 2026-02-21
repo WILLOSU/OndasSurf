@@ -1,40 +1,20 @@
 import { Response } from 'express';
-import mongoose from 'mongoose';
-import { CUSTOM_VALIDATION } from '../models/user';
 import ApiError, { APIError } from '@src/util/errors/api-error';
+import {
+  DatabaseConflictError,
+  DatabaseUnknownClientError,
+  DatabaseValidationError,
+} from '@src/repositories/repository';
 
 export abstract class BaseController {
-  protected sendCreateUpdateErrorResponse(
-    res: Response,
-    error: mongoose.Error.ValidationError | Error
-  ): void {
-    if (error instanceof mongoose.Error.ValidationError) {
-      const clientError = this.handleClientErrors(error);
-      res.status(clientError.code).send(
-        ApiError.format({
-          code: clientError.code,
-          message: clientError.error,
-        })
-      );
+  protected sendCreateUpdateErrorResponse(res: Response, error: unknown): void {
+    if (error instanceof DatabaseConflictError) {
+      res.status(409).send(ApiError.format({ code: 409, message: error.message }));
+    } else if (error instanceof DatabaseUnknownClientError || error instanceof DatabaseValidationError) {
+      res.status(400).send(ApiError.format({ code: 400, message: error.message }));
     } else {
-      res
-        .status(500)
-        .send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
+      res.status(500).send(ApiError.format({ code: 500, message: 'Something went wrong!' }));
     }
-  }
-
-  private handleClientErrors(error: mongoose.Error.ValidationError): {
-    code: number;
-    error: string;
-  } {
-    const duplicatedKindErrors = Object.values(error.errors).filter(
-      (err) => err.kind === CUSTOM_VALIDATION.DUPLICATED
-    );
-
-    if (duplicatedKindErrors.length) {
-      return { code: 409, error: error.message };
-    }
-    return { code: 400, error: error.message };
   }
 
   protected sendErrorResponse(res: Response, apiError: APIError): Response {

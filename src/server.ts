@@ -61,7 +61,7 @@ export class SetupServer extends Server {
       OpenApiValidator.middleware({
         apiSpec: apiSchema as OpenAPIV3.DocumentV3,
         validateRequests: true, //will be implemented in step2
-        validateResponses: true, //will be implemented in step2
+        validateResponses: false, //will be implemented in step2
       })
     );
   }

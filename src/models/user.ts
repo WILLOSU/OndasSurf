@@ -32,7 +32,7 @@ const schema = new mongoose.Schema(
   {
     toJSON: {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      transform(_: unknown, ret: Record<string, any>) {
+      transform(_, ret: any) {
         ret.id = ret._id.toString();
         delete ret._id;
         delete ret.__v;

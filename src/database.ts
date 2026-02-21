@@ -1,26 +1,10 @@
-import config from 'config';
-import mongoose, { Mongoose } from 'mongoose';
-import logger from '@src/logger';
+import config, { IConfig } from 'config';
+import { connect as mongooseConnect, connection } from 'mongoose';
 
-export const connect = async (): Promise<Mongoose> => {
-  let mongoUrl: string;
+const dbConfig: IConfig = config.get('App.database');
 
-  try {
-    mongoUrl = config.get<string>('App.database.mongoUrl');
-  } catch {
-    mongoUrl =
-      process.env.MONGODB_URL || 'mongodb://localhost:27017/surf-forecast';
-  }
-
-  if (process.env.NODE_ENV === 'production' && mongoUrl.includes('localhost')) {
-    mongoUrl = process.env.MONGODB_URL || mongoUrl;
-  }
-
-
- 
-  
-
-  return await mongoose.connect(mongoUrl);
+export const connect = async (): Promise<void> => {
+  await mongooseConnect(dbConfig.get('mongoUrl'));
 };
 
-export const close = (): Promise<void> => mongoose.connection.close();
+export const close = (): Promise<void> => connection.close();

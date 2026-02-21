@@ -4,12 +4,12 @@ import { CUSTOM_VALIDATION } from '@src/models/user';
 import { Error, Model } from 'mongoose';
 import { FilterOptions, WithId } from '.';
 import {
+  DatabaseConflictError,
   DatabaseInternalError,
   DatabaseUnknownClientError,
   DatabaseValidationError,
   Repository,
 } from './repository';
-
 export abstract class DefaultMongoDBRepository<
   T extends BaseModel,
 > extends Repository<T> {
@@ -17,7 +17,7 @@ export abstract class DefaultMongoDBRepository<
     super();
   }
 
-  async create(data: T) {
+ async create(data: T) {
     try {
       const model = new this.model(data);
       const createdData = await model.save();
@@ -57,7 +57,7 @@ export abstract class DefaultMongoDBRepository<
           err.kind === CUSTOM_VALIDATION.DUPLICATED
       );
       if (duplicatedKindErrors.length) {
-        throw new DatabaseValidationError(error.message);
+        throw new DatabaseConflictError(error.message);
       }
       throw new DatabaseUnknownClientError(error.message);
     }
