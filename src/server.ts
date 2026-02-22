@@ -3,7 +3,7 @@ import { Server } from '@overnightjs/core';
 import { Application } from 'express';
 import bodyParser from 'body-parser';
 import * as http from 'http';
-import  pinoHttp  from 'pino-http';
+import pinoHttp from 'pino-http';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import * as OpenApiValidator from 'express-openapi-validator';

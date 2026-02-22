@@ -2,7 +2,7 @@
   "App": {
     "port": 3000,
     "database": {
-      "mongoUrl": "MONGODB_URL"
+      "mongoUrl": "MONGODB_URL=mongodb+srv://william:201610Gaya@cluster0.bc9kvrg.mongodb.net/OndasSurf?retryWrites=true&w=majority&appName=Cluster0"
     },
     "auth": {
       "key": "test-secret-key-12345",

@@ -13,7 +13,9 @@ export class DatabaseInternalError extends DatabaseError {}
 
 export abstract class Repository<T> implements BaseRepository<T> {
   public abstract create(data: T): Promise<WithId<T>>;
-  public abstract findOne(options: FilterOptions): Promise<WithId<T> | undefined>;
+  public abstract findOne(
+    options: FilterOptions
+  ): Promise<WithId<T> | undefined>;
   public abstract find(filter: FilterOptions): Promise<WithId<T>[]>;
   public abstract deleteAll(): Promise<void>;
 }

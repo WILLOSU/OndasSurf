@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { SetupServer } from '@src/server';
 import supertest from 'supertest';
 import { Test, SuperTest } from 'supertest';
@@ -16,12 +19,11 @@ declare global {
 
 let server: SetupServer;
 
-// test/jest-setup.ts
 beforeAll(async () => {
   server = new SetupServer();
   await server.init();
   global.testRequest = supertest(server.getApp()) as unknown as SuperTest<Test>;
-}, 60000); // ← aumente para 60 segundos
+}, 60000);
 
 afterAll(async () => {
   await server.close();

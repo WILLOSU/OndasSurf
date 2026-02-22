@@ -5,5 +5,5 @@ const rootPath = path.resolve(__dirname, '..');
 
 moduleAlias.addAliases({
   '@src': rootPath,
-  '@test': path.resolve(rootPath, '..', 'test')
+  '@test': path.resolve(rootPath, '..', 'test'),
 });

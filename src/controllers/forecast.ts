@@ -29,7 +29,7 @@ const rateLimiter = rateLimit({
       })
     );
   },
-  validate: false,  
+  validate: false,
 });
 
 @Controller('forecast')

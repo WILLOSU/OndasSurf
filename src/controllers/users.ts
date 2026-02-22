@@ -32,7 +32,9 @@ export class UsersController extends BaseController {
           description: 'Try verifying your email address.',
         });
       }
-      if (!(await AuthService.comparePasswords(req.body.password, user.password))) {
+      if (
+        !(await AuthService.comparePasswords(req.body.password, user.password))
+      ) {
         return this.sendErrorResponse(res, {
           code: 401,
           message: 'Password does not match!',

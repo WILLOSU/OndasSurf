@@ -59,7 +59,10 @@ schema.pre<UserModel>('save', async function (): Promise<void> {
     const hashedPassword = await AuthService.hashPassword(this.password);
     this.password = hashedPassword;
   } catch (err) {
-    logger.error({ err }, `Error hashing the password for the user ${this.name}`);
+    logger.error(
+      { err },
+      `Error hashing the password for the user ${this.name}`
+    );
   }
 });
 

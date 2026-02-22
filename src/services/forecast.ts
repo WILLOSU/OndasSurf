@@ -7,8 +7,7 @@ import logger from '@src/logger';
 import { Rating } from './rating';
 
 export interface BeachForecast
-  extends Omit<Beach, 'id' | 'userId'>,
-    ForecastPoint {
+  extends Omit<Beach, 'id' | 'userId'>, ForecastPoint {
   rating: number;
 }
 
