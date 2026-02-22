@@ -71,7 +71,7 @@ describe('Forecast Service', () => {
             windSpeed: 100,
           },
           {
-            lat: -33.792726,
+            lat: 151.289824,
             lng: 151.289824,
             name: 'Manly',
             position: 'E',
