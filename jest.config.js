@@ -11,7 +11,7 @@ export default {
     '^@src/(.*)$': '<rootDir>/src/$1',
     '^@test/(.*)$': '<rootDir>/test/$1',
   },
-  setupFilesAfterEnv: ['<rootDir>/test/jest-setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/test/jest-setup.unit.ts'],
   globals: {
     'ts-jest': {
       isolatedModules: true,

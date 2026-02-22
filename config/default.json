@@ -2,21 +2,21 @@
   "App": {
     "port": 3000,
     "database": {
-      "mongoUrl": "mongodb+srv://william:201610Gaya@cluster0.bc9kvrg.mongodb.net/OndasSurf?retryWrites=true&w=majority&appName=Cluster0"
+      "mongoUrl": "MONGODB_URL"
     },
     "auth": {
-      "key": "some-key",
-      "tokenExpiresIn": "20000000"
+      "key": "test-secret-key-12345",
+      "tokenExpiresIn": "1d"
     },
     "resources": {
       "StormGlass": {
-        "apiUrl": "https://api.stormglass.io/v2",
-        "apiToken": "1ed04234-e8b5-11f0-a8f4-0242ac130003-1ed0428e-e8b5-11f0-a8f4-0242ac130003",
+        "apiUrl": "https://api.stormglass.io:443/v2",
+        "apiToken": "test-token",
         "cacheTtl": 3600
       }
     },
     "logger": {
-      "enabled": true,
+      "enabled": "false",
       "level": "info"
     }
   }
